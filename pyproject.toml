@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mlflow2rdf"
-version = "0.2.0"
+version = "0.2.1"
 description = "Convert MLflow tracking data into MLSO-aligned RDF Knowledge Graphs"
 readme = "PACKAGE_README.md"
 license = {text = "MIT"}
@@ -30,8 +30,8 @@ dependencies = [
 dev = ["pytest", "build", "twine"]
 
 [project.urls]
-Homepage = "https://github.com/dtai-kg/MLSO"
-Repository = "https://github.com/jasonjia-ml/MLSO"
+Homepage = "https://github.com/KudJason/mlflow2rdf"
+Repository = "https://github.com/KudJason/mlflow2rdf"
 
 [project.scripts]
 mlflow2rdf = "mlflow2rdf.cli:main"
