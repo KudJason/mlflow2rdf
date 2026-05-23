@@ -1,0 +1,58 @@
+@prefix mlso: <http://w3id.org/mlso/> .
+@prefix mls: <http://www.w3.org/ns/mls#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# Parameter-Efficient Fine-Tuning Shapes (LoRA, QLoRA, Adapter)
+# Validates: M3b (LLaMA-7B + LoRA)
+# =============================================================================
+
+<http://w3id.org/mlsea/shapes/LoraRankShape> a sh:NodeShape ;
+    rdfs:label "LoRA Rank Validation" ;
+    sh:message "LoRA experiments SHOULD have mlso:hasLoraRank with a positive integer value (typical: 4, 8, 16, 32, 64)" ;
+    sh:property [ sh:datatype xsd:integer ;
+            sh:message "hasLoraRank must be an integer" ;
+            sh:minInclusive 1 ;
+            sh:path mlso:hasLoraRank ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasLoraRank .
+
+<http://w3id.org/mlsea/shapes/LoraAlphaShape> a sh:NodeShape ;
+    rdfs:label "LoRA Alpha Validation" ;
+    sh:message "LoRA experiments SHOULD have mlso:hasLoraAlpha with a positive integer value (typical: 2× rank)" ;
+    sh:property [ sh:datatype xsd:integer ;
+            sh:message "hasLoraAlpha must be an integer" ;
+            sh:minInclusive 1 ;
+            sh:path mlso:hasLoraAlpha ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasLoraAlpha .
+
+<http://w3id.org/mlsea/shapes/LoraDropoutShape> a sh:NodeShape ;
+    rdfs:label "LoRA Dropout Validation" ;
+    sh:message "If mlso:hasLoraDropout is present, value should be between 0.0 and 1.0" ;
+    sh:property [ sh:datatype xsd:float ;
+            sh:maxInclusive 1.0 ;
+            sh:message "hasLoraDropout must be between 0.0 and 1.0" ;
+            sh:minInclusive 0.0 ;
+            sh:path mlso:hasLoraDropout ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasLoraDropout .
+
+<http://w3id.org/mlsea/shapes/AdapterTypeShape> a sh:NodeShape ;
+    rdfs:label "Adapter Type Validation" ;
+    sh:message "mlso:hasAdapterType should be a string (e.g., LoRA, QLoRA, PrefixTuning)" ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:path mlso:hasAdapterType ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasAdapterType .
+
+<http://w3id.org/mlsea/shapes/TargetModulesShape> a sh:NodeShape ;
+    rdfs:label "LoRA Target Modules Validation" ;
+    sh:message "LoRA experiments SHOULD specify target modules (e.g., q_proj, v_proj for attention)" ;
+    sh:property [ sh:message "hasTargetModules should specify attention projection layers" ;
+            sh:path mlso:hasTargetModules ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasTargetModules .

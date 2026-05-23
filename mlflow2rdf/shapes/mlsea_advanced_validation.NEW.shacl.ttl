@@ -1,0 +1,61 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix mls: <http://www.w3.org/ns/mls#> .
+@prefix ns1: <http://w3id.org/mlsea/tag/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://w3id.org/mlsea/shapes/LearningRateShape> a sh:NodeShape ;
+    sh:property [ sh:path rdf:value ] ;
+    sh:targetClass mls:HyperParameter ;
+    sh:targetSubjectsOf mls:hasValue .
+
+<http://w3id.org/mlsea/shapes/MetricSemanticShape> a sh:NodeShape ;
+    rdfs:label "Metric Semantic Checks" ;
+    sh:or ( [ sh:not [ sh:property [ sh:hasValue "r2-mean" ;
+                                sh:path rdfs:label ] ] ] [ sh:property [ sh:maxInclusive 1e+00 ;
+                        sh:message "R2 Score must be <= 1.0" ;
+                        sh:path rdf:value ] ] ) ;
+    sh:targetClass mls:Metric .
+
+<http://w3id.org/mlsea/shapes/ParamSemanticShape> a sh:NodeShape ;
+    rdfs:label "Parameter Semantic Checks" ;
+    sh:or ( [ sh:not [ sh:property [ sh:hasValue "model-learning-rate" ;
+                                sh:path rdfs:label ] ] ] [ sh:property [ sh:message "Learning rate must be a positive number" ;
+                        sh:path rdf:value ;
+                        sh:pattern "^[0-9.]+$" ] ] ) ;
+    sh:targetClass mls:HyperParameter .
+
+<http://w3id.org/mlsea/shapes/ParameterQualityShape> a sh:NodeShape ;
+    rdfs:label "Parameter Value Quality" ;
+    sh:targetClass mls:HyperParameter .
+
+<http://w3id.org/mlsea/shapes/RunFormatShape> a sh:NodeShape ;
+    rdfs:label "Run Format Integrity" ;
+    sh:property [ sh:message "Run ID must be a valid 32-character hex UUID" ;
+            sh:path dcterms:identifier ;
+            sh:pattern "^[a-f0-9]{32}$" ;
+            sh:severity sh:Violation ],
+        [ sh:in ( "LOCAL" "PROJECT" "GIT" "NOTEBOOK" "JOB" ) ;
+            sh:message "Invalid Source Type" ;
+            sh:path ns1:mlflow-source-type ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Run .
+
+<http://w3id.org/mlsea/shapes/RunIntegrityShape> a sh:NodeShape ;
+    rdfs:label "Run Referential Integrity" ;
+    sh:property [ sh:message "hasInput must point to a valid resource (IRI), not a literal" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mls:hasInput ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass mls:Run .
+
+<http://w3id.org/mlsea/shapes/TimeLogicShape> a sh:NodeShape ;
+    rdfs:label "Time Consistency Check" ;
+    sh:property [ sh:lessThanOrEquals dcterms:modified ;
+            sh:message "Run creation time must be before or equal to modification time" ;
+            sh:path dcterms:created ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass mls:Run .
+

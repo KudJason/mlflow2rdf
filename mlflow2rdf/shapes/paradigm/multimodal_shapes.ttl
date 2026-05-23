@@ -1,0 +1,162 @@
+@prefix mlso: <http://w3id.org/mlso/> .
+@prefix mls: <http://www.w3.org/ns/mls#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# Multi-Modal Learning Shapes
+# Validates: M5a (CLIP Image), M5b (ViT), M5c (Fusion-in-Decoder)
+# =============================================================================
+
+<http://w3id.org/mlsea/shapes/MultiModalParadigmShape> a sh:NodeShape ;
+    rdfs:label "Multi-Modal Paradigm Validation" ;
+    sh:message "Multi-modal experiments SHOULD specify modality types (schema:Image, schema:Text)" ;
+    sh:property [ sh:message "Multi-modal experiments should have modality specification" ;
+            sh:path mlso:hasModality ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf <http://w3id.org/mlsea/tag/mlsea-modality/multimodal> .
+
+<http://w3id.org/mlsea/shapes/ContrastiveMultiModalShape> a sh:NodeShape ;
+    rdfs:label "Contrastive Multi-Modal Validation" ;
+    sh:message "CLIP-style contrastive multi-modal experiments SHOULD have contrastive temperature" ;
+    sh:property [ sh:datatype xsd:float ;
+            sh:maxInclusive 1.0 ;
+            sh:message "Contrastive temperature should be between 0.0 and 1.0" ;
+            sh:minExclusive 0.0 ;
+            sh:path mlso:hasContrastiveTemperature ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasContrastiveTemperature .
+
+<http://w3id.org/mlsea/shapes/FusionStrategyShape> a sh:NodeShape ;
+    rdfs:label "Fusion Strategy Validation" ;
+    sh:message "Fusion multi-modal experiments SHOULD specify mlso:hasFusionStrategy (early_fusion, late_fusion, intermediate_fusion, hybrid_fusion)" ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:message "hasFusionStrategy must be a string (e.g., early_fusion, late_fusion)" ;
+            sh:path mlso:hasFusionStrategy ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasFusionStrategy .
+
+<http://w3id.org/mlsea/shapes/FusionOperatorShape> a sh:NodeShape ;
+    rdfs:label "Fusion Operator Validation" ;
+    sh:message "Late fusion experiments SHOULD specify mlso:hasFusionOperator (e.g., cosine_similarity, concatenation)" ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:message "hasFusionOperator must be a string" ;
+            sh:path mlso:hasFusionOperator ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasFusionOperator .
+
+<http://w3id.org/mlsea/shapes/ModalityPairingShape> a sh:NodeShape ;
+    rdfs:label "Modality Pairing Validation" ;
+    sh:message "Multi-modal experiments SHOULD specify mlso:hasModalityPairing (e.g., image_text, image_classification)" ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:message "hasModalityPairing must be a string" ;
+            sh:path mlso:hasModalityPairing ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasModalityPairing .
+
+<http://w3id.org/mlsea/shapes/ImageEncoderShape> a sh:NodeShape ;
+    rdfs:label "Image Encoder Validation" ;
+    sh:message "Multi-modal experiments SHOULD reference an image encoder via mlso:hasImageEncoder" ;
+    sh:property [ sh:message "hasImageEncoder must reference an Algorithm" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasImageEncoder ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasImageEncoder .
+
+<http://w3id.org/mlsea/shapes/TextEncoderShape> a sh:NodeShape ;
+    rdfs:label "Text Encoder Validation" ;
+    sh:message "Multi-modal experiments SHOULD reference a text encoder via mlso:hasTextEncoder" ;
+    sh:property [ sh:message "hasTextEncoder must reference an Algorithm" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasTextEncoder ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasTextEncoder .
+
+<http://w3id.org/mlsea/shapes/VisionTransformerShape> a sh:NodeShape ;
+    rdfs:label "Vision Transformer Validation" ;
+    sh:message "ViT experiments SHOULD specify patch size and image size" ;
+    sh:property [ sh:datatype xsd:integer ;
+            sh:minInclusive 1 ;
+            sh:path <http://w3id.org/mlsea/mlflow/hyperparameter/patch-size> ;
+            sh:severity sh:Warning ],
+        [ sh:datatype xsd:integer ;
+            sh:minInclusive 1 ;
+            sh:path <http://w3id.org/mlsea/mlflow/hyperparameter/image-size> ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf <http://w3id.org/mlsea/mlflow/hyperparameter/patch-size> .
+
+<http://w3id.org/mlsea/shapes/RetrievalMetricShape> a sh:NodeShape ;
+    rdfs:label "Multi-Modal Retrieval Metric Validation" ;
+    sh:message "Multi-modal retrieval experiments SHOULD log recall@k metrics" ;
+    sh:property [ sh:message "Multi-modal retrieval should log Recall@K metrics" ;
+            sh:path mlso:hasMetric ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf <http://w3id.org/mlsea/mlflow/metric/recall_at_k> .
+
+<http://w3id.org/mlsea/shapes/RetrievalMethodShape> a sh:NodeShape ;
+    rdfs:label "Retrieval Method Validation" ;
+    sh:message "RAG experiments SHOULD specify mlso:hasRetrievalMethod (dense, sparse, or hybrid)" ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:message "hasRetrievalMethod must be a string (dense, sparse, or hybrid)" ;
+            sh:path mlso:hasRetrievalMethod ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasRetrievalMethod .
+
+<http://w3id.org/mlsea/shapes/TopKShape> a sh:NodeShape ;
+    rdfs:label "Top-K Validation" ;
+    sh:message "RAG experiments SHOULD specify mlso:hasTopK for retrieval" ;
+    sh:property [ sh:datatype xsd:integer ;
+            sh:minInclusive 1 ;
+            sh:message "hasTopK must be a positive integer" ;
+            sh:path mlso:hasTopK ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasTopK .
+
+<http://w3id.org/mlsea/shapes/EmbeddingModelShape> a sh:NodeShape ;
+    rdfs:label "Embedding Model Validation" ;
+    sh:message "RAG experiments SHOULD reference an embedding model via mlso:hasEmbeddingModel" ;
+    sh:property [ sh:message "hasEmbeddingModel must reference an Algorithm" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasEmbeddingModel ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasEmbeddingModel .
+
+<http://w3id.org/mlsea/shapes/ChunkSizeShape> a sh:NodeShape ;
+    rdfs:label "Chunk Size Validation" ;
+    sh:message "RAG knowledge base SHOULD specify mlso:hasChunkSize" ;
+    sh:property [ sh:datatype xsd:integer ;
+            sh:minInclusive 1 ;
+            sh:message "hasChunkSize must be a positive integer" ;
+            sh:path mlso:hasChunkSize ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasChunkSize .
+
+<http://w3id.org/mlsea/shapes/AgentStrategyShape> a sh:NodeShape ;
+    rdfs:label "Agent Strategy Validation" ;
+    sh:message "LLM Agent experiments SHOULD specify mlso:hasAgentStrategy (e.g., ReAct, Chain-of-Thought)" ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:message "hasAgentStrategy must be a string" ;
+            sh:path mlso:hasAgentStrategy ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasAgentStrategy .
+
+<http://w3id.org/mlsea/shapes/ToolNameShape> a sh:NodeShape ;
+    rdfs:label "Tool Name Validation" ;
+    sh:message "Tool-use agent experiments SHOULD specify mlso:hasToolName" ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:message "hasToolName must be a string" ;
+            sh:path mlso:hasToolName ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasToolName .
+
+<http://w3id.org/mlsea/shapes/MaxIterationsShape> a sh:NodeShape ;
+    rdfs:label "Max Iterations Validation" ;
+    sh:message "Agent experiments SHOULD specify mlso:hasMaxIterations" ;
+    sh:property [ sh:datatype xsd:integer ;
+            sh:minInclusive 1 ;
+            sh:message "hasMaxIterations must be a positive integer" ;
+            sh:path mlso:hasMaxIterations ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasMaxIterations .

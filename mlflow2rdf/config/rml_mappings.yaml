@@ -1,0 +1,72 @@
+# MLflow to RDF - YARRRML Mapping Rules (Morph-KGC compatible)
+# Standard YARRRML format for the RML pipeline.
+
+prefixes:
+  mlso: "http://w3id.org/mlso/"
+  dcat: "http://www.w3.org/ns/dcat#"
+  prov: "http://www.w3.org/ns/prov#"
+  dcterms: "http://purl.org/dc/terms/"
+  rdfs: "http://www.w3.org/2000/01/rdf-schema#"
+  rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xsd: "http://www.w3.org/2001/XMLSchema#"
+  mls: "http://www.w3.org/ns/mls#"
+
+mappings:
+  experiment:
+    sources:
+      - ["data/mlflow_experiments.csv", csv]
+    s: "mlso:Experiment/$(experiment_id)"
+    po:
+      - [a, "mlso:Experiment"]
+      - [dcterms:identifier, "$(experiment_id)", xsd:string]
+      - [rdfs:label, "$(name)", xsd:string]
+      - ["mlso:artifactLocation", "$(artifact_location)"]
+      - ["mlso:lifecycleStage", "$(lifecycle_stage)"]
+      - [dcterms:created, "$(creation_time)", xsd:dateTime]
+      - [dcterms:modified, "$(last_update_time)", xsd:dateTime]
+
+  run:
+    sources:
+      - ["data/mlflow_runs.csv", csv]
+    s: "mlso:Run/$(run_id)"
+    po:
+      - [a, "mlso:Run"]
+      - [dcterms:identifier, "$(run_id)", xsd:string]
+      - ["mlso:status", "$(status)", xsd:string]
+      - [prov:startedAtTime, "$(start_time)", xsd:dateTime]
+      - [prov:endedAtTime, "$(end_time)", xsd:dateTime]
+      - [prov:wasAssociatedWith, "$(user_id)"]
+      - ["mlso:belongsToExperiment", "mlso:Experiment/$(experiment_id)"]
+      - [rdfs:label, "$(run_name)"]
+
+  hyperparameter_setting:
+    sources:
+      - ["data/mlflow_params.csv", csv]
+    s: "mlso:HyperParameterSetting/$(run_id)/$(param_key)"
+    po:
+      - [a, "mlso:HyperParameterSetting"]
+      - ["mlso:parameterName", "$(param_key)", xsd:string]
+      - ["mlso:value", "$(param_value)"]
+      - ["mlso:belongsToRun", "mlso:Run/$(run_id)"]
+
+  metric:
+    sources:
+      - ["data/mlflow_metrics.csv", csv]
+    s: "mlso:Metric/$(run_id)/$(metric_key)"
+    po:
+      - [a, "mlso:Metric"]
+      - [rdfs:label, "$(metric_key)", xsd:string]
+      - ["mlso:value", "$(metric_value)", xsd:float]
+      - [prov:generatedAtTime, "$(timestamp)", xsd:dateTime]
+      - ["mlso:step", "$(step)", xsd:integer]
+      - ["mlso:belongsToRun", "mlso:Run/$(run_id)"]
+
+  tag:
+    sources:
+      - ["data/mlflow_tags.csv", csv]
+    s: "mlso:Tag/$(run_id)/$(tag_key)"
+    po:
+      - [a, "dcterms:hasPart"]
+      - [rdfs:label, "$(tag_key)", xsd:string]
+      - [rdf:value, "$(tag_value)", xsd:string]
+      - ["mlso:belongsToRun", "mlso:Run/$(run_id)"]

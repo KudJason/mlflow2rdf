@@ -1,0 +1,28 @@
+# SHACL 验证配置
+# 使用 shapes/ 目录中的真实 SHACL shape 文件进行验证
+
+validation:
+  enabled: true
+  strict_mode: false
+
+  # SHACL shape 文件路径（相对于 shapes/ 目录）
+  shapes_dir: ../shapes
+
+  # 主要 SHACL shape 文件
+  shape_files:
+    - ../shapes/mlsea_v4_master.shacl.ttl
+    - ../shapes/mlsea_v4_validation.shacl.ttl
+    - ../shapes/mlsea_mapping_validation.shacl.ttl
+    - ../shapes/mlso_auto_generated.shacl.ttl
+    - ../shapes/mlso_presence_checks.shacl.ttl
+
+  # SHACL 推理模式：none | rdfs | owlrl
+  inference: owlrl
+
+  # 是否启用 SPARQL 高级约束
+  advanced: false
+
+# 验证报告输出目录
+report:
+  format: json
+  output_dir: ../data/validation_reports

@@ -1,0 +1,124 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix mls: <http://www.w3.org/ns/mls#> .
+@prefix mlso: <http://w3id.org/mlso/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# Core V4 Validation Shapes — informational only (all sh:Warning)
+# =============================================================================
+# NOTE: This file validates optional metadata presence.
+# All constraints use sh:Warning severity, not sh:Violation.
+# SHACL conforms=true means NO violations (warnings are informational).
+#
+# Paradigm-specific shapes (LoRA, Diffusion, Forecasting, MultiModal)
+# are loaded separately via sh:imports in mlsea_v4_validation.shacl.ttl
+# which references this file.
+# =============================================================================
+
+<http://w3id.org/mlsea/shapes/V4AlgorithmShape> a sh:NodeShape ;
+    rdfs:label "V4 Algorithm Validation" ;
+    sh:property [ sh:message "Algorithm SHOULD have rdfs:label" ;
+            sh:path rdfs:label ;
+            sh:severity sh:Warning ],
+        [ sh:message "Algorithm SHOULD have mlso:hasAlgorithmType" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasAlgorithmType ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Algorithm .
+
+<http://w3id.org/mlsea/shapes/V4ModelShape> a sh:NodeShape ;
+    rdfs:label "V4 Model Validation" ;
+    sh:property [ sh:message "Model SHOULD have mlso:trainedOn link to Dataset" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:trainedOn ;
+            sh:severity sh:Warning ],
+        [ sh:message "Model SHOULD have rdfs:label" ;
+            sh:path rdfs:label ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Model .
+
+<http://w3id.org/mlsea/shapes/V4HyperParameterSettingShape> a sh:NodeShape ;
+    rdfs:label "V4 HyperParameterSetting Validation" ;
+    sh:property [ sh:message "HyperParameterSetting SHOULD have mls:specifiedBy" ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path mls:specifiedBy ;
+            sh:severity sh:Warning ],
+        [ sh:message "HyperParameterSetting SHOULD have mls:hasValue" ;
+            sh:maxCount 1 ;
+            sh:path mls:hasValue ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:HyperParameterSetting .
+
+<http://w3id.org/mlsea/shapes/V4ModelEvaluationShape> a sh:NodeShape ;
+    rdfs:label "V4 ModelEvaluation Validation" ;
+    sh:property [ sh:message "ModelEvaluation SHOULD have mls:specifiedBy" ;
+            sh:maxCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path mls:specifiedBy ;
+            sh:severity sh:Warning ],
+        [ sh:message "ModelEvaluation SHOULD have mls:hasValue" ;
+            sh:maxCount 1 ;
+            sh:path mls:hasValue ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:ModelEvaluation .
+
+<http://w3id.org/mlsea/shapes/V4RunRealizesShape> a sh:NodeShape ;
+    rdfs:label "V4 Run Realizes Algorithm Validation" ;
+    sh:property [ sh:message "Run SHOULD realize an Algorithm via mls:realizes" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mls:realizes ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Run .
+
+<http://w3id.org/mlsea/shapes/V4RunHasOutputShape> a sh:NodeShape ;
+    rdfs:label "V4 Run Has Output Validation" ;
+    sh:property [ sh:message "Run SHOULD have output via mls:hasOutput" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mls:hasOutput ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Run .
+
+<http://w3id.org/mlsea/shapes/V4DatasetShape> a sh:NodeShape ;
+    rdfs:label "V4 Dataset Validation" ;
+    sh:property [ sh:message "Dataset SHOULD have dcterms:title" ;
+            sh:path dcterms:title ;
+            sh:severity sh:Warning ],
+        [ sh:message "Dataset SHOULD have rdfs:label" ;
+            sh:path rdfs:label ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Dataset .
+
+<http://w3id.org/mlsea/shapes/V4TaskShape> a sh:NodeShape ;
+    rdfs:label "V4 Task Validation" ;
+    sh:property [ sh:message "Task SHOULD have mlso:hasTaskType" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasTaskType ;
+            sh:severity sh:Warning ],
+        [ sh:message "Task SHOULD have rdfs:label" ;
+            sh:path rdfs:label ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Task .
+
+<http://w3id.org/mlsea/shapes/V4ExperimentShape> a sh:NodeShape ;
+    rdfs:label "V4 Experiment Validation" ;
+    sh:property [ sh:message "Experiment SHOULD have dcterms:title" ;
+            sh:path dcterms:title ;
+            sh:severity sh:Warning ],
+        [ sh:message "Experiment SHOULD have rdfs:label" ;
+            sh:path rdfs:label ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Experiment .
+
+<http://w3id.org/mlsea/shapes/V4SoftwareShape> a sh:NodeShape ;
+    rdfs:label "V4 Software Validation" ;
+    sh:property [ sh:message "Software SHOULD have rdfs:label" ;
+            sh:path rdfs:label ;
+            sh:severity sh:Warning ],
+        [ sh:message "Software SHOULD have dcterms:description" ;
+            sh:path dcterms:description ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Software .

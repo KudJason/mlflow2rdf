@@ -1,0 +1,131 @@
+# MLflow → RDF 映射配置（声明式）
+# 声明式映射规则 — 支持简单 KV→RDF 转换
+
+global:
+  base_uri: http://w3id.org/mlsea/
+  ontology: mlso
+
+mappings:
+  # ==================== Experiment ====================
+  Experiment:
+    source: mlflow.experiments
+    target: mlso:Experiment
+    description: "MLflow 实验映射到 MLSO Experiment"
+    properties:
+      - source: experiment_id
+        target: dcterms:identifier
+        type: string
+        required: true
+      - source: name
+        target: rdfs:label
+        type: string
+        required: true
+      - source: artifact_location
+        target: mlso:artifactLocation
+        type: uri
+      - source: lifecycle_stage
+        target: mlso:lifecycleStage
+        type: string
+      - source: creation_time
+        target: dcterms:created
+        type: datetime
+      - source: last_update_time
+        target: dcterms:modified
+        type: datetime
+
+  # ==================== Run ====================
+  Run:
+    source: mlflow.runs
+    target: mlso:Run
+    description: "MLflow 运行映射到 MLSO Run"
+    properties:
+      - source: info.run_id
+        target: dcterms:identifier
+        type: string
+        required: true
+      - source: info.status
+        target: mlso:status
+        type: string
+        required: true
+      - source: info.start_time
+        target: prov:startedAtTime
+        type: timestamp
+      - source: info.end_time
+        target: prov:endedAtTime
+        type: timestamp
+      - source: info.run_uuid
+        target: dcterms:identifier
+        type: string
+      - source: info.experiment_id
+        target: mlso:belongsToExperiment
+        type: reference
+        reference_to: Experiment
+      - source: info.user_id
+        target: prov:wasAssociatedWith
+        type: string
+      - source: data.tags.mlflow.runName
+        target: rdfs:label
+        type: string
+
+  # ==================== HyperParameterSetting ====================
+  HyperParameterSetting:
+    source: mlflow.params
+    target: mlso:HyperParameterSetting
+    description: "MLflow 参数映射到 MLSO HyperParameterSetting"
+    properties:
+      - source: key
+        target: mlso:parameterName
+        type: string
+        required: true
+      - source: value
+        target: mlso:value
+        type: string
+        required: true
+      - source: run_id
+        target: mlso:belongsToRun
+        type: reference
+        reference_to: Run
+
+  # ==================== Metric ====================
+  Metric:
+    source: mlflow.metrics
+    target: mlso:Metric
+    description: "MLflow 指标映射到 MLSO Metric"
+    properties:
+      - source: key
+        target: rdfs:label
+        type: string
+        required: true
+      - source: value
+        target: mlso:value
+        type: float
+        required: true
+      - source: timestamp
+        target: prov:generatedAtTime
+        type: timestamp
+      - source: step
+        target: mlso:step
+        type: integer
+      - source: run_id
+        target: mlso:belongsToRun
+        type: reference
+        reference_to: Run
+
+  # ==================== Tag ====================
+  Tag:
+    source: mlflow.tags
+    target: dcterms:hasPart
+    description: "MLflow 标签映射到 Dublin Core"
+    properties:
+      - source: key
+        target: rdfs:label
+        type: string
+        required: true
+      - source: value
+        target: rdf:value
+        type: string
+        required: true
+      - source: run_id
+        target: mlso:belongsToRun
+        type: reference
+        reference_to: Run

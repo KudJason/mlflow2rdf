@@ -1,0 +1,50 @@
+# Task Type, OpenML Measure, and Known Dataset Metadata
+
+# === Task Type Map ===
+# Maps MLflow task tag values to MLST taxonomy URIs.
+task_types:
+  classification: Classification
+  generative: GenerativeModeling
+  image-text-retrieval: Retrieval
+  self-supervised-learning: Self-SupervisedLearning
+  embedding-alignment: EmbeddingsEvaluation
+  similarity-scoring: SimilarityMatching
+  forecasting: Forecasting
+  visual-qa: VisualQuestionAnswering(VQA)
+  detection: ObjectDetection
+
+# === OpenML Measure Alignment Map ===
+# Maps metric names to OpenML evaluation measure names for cross-system alignment.
+openml_measures:
+  rmse: root_mean_squared_error
+  mae: mean_absolute_error
+  accuracy: accuracy
+  f1: f_measure
+  f1_score: f_measure
+  precision: precision
+  recall: recall
+  roc-auc: area_under_roc_curve
+  roc_auc: area_under_roc_curve
+  kappa: kappa
+  matthews_correlation: matthews_correlation_coefficient
+  matthews_correlation_coefficient: matthews_correlation_coefficient
+
+# === Known Dataset Metadata ===
+# Fallback metadata for well-known datasets (when tracking system lacks these attributes).
+known_datasets:
+  cifar10:
+    rowCount: 60000
+    featureCount: 3072
+    targetName: label
+  imdb:
+    rowCount: 50000
+    featureCount: 1
+    targetName: sentiment
+  electricity:
+    rowCount: 45312
+    featureCount: 6
+    targetName: class
+  ms-coco-subset:
+    rowCount: 5000
+    featureCount: 3
+    targetName: category

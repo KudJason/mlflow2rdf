@@ -1,0 +1,79 @@
+@prefix mlso: <http://w3id.org/mlso/> .
+@prefix mls: <http://www.w3.org/ns/mls#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# Pipeline Lineage Relationship Shapes
+# Validates: Model/Algorithm lineage connections
+# Domain: mls:Model, mls:Algorithm, mls:Run
+# =============================================================================
+
+<http://w3id.org/mlsea/shapes/BasedOnModelShape> a sh:NodeShape ;
+    rdfs:label "Based On Model Validation" ;
+    sh:message "Adapter models SHOULD reference their base model via mlso:basedOnModel" ;
+    sh:property [ sh:message "basedOnModel must reference a Model (base model)" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:basedOnModel ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:basedOnModel .
+
+<http://w3id.org/mlsea/shapes/WasPretrainedFromShape> a sh:NodeShape ;
+    rdfs:label "Was Pretrained From Validation" ;
+    sh:message "Downstream runs SHOULD reference their pretrain run via mlso:wasPretrainedFrom" ;
+    sh:property [ sh:message "wasPretrainedFrom must reference a Run (pretrain run)" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:wasPretrainedFrom ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:wasPretrainedFrom .
+
+<http://w3id.org/mlsea/shapes/ProducesRepresentationShape> a sh:NodeShape ;
+    rdfs:label "Produces Representation Validation" ;
+    sh:message "Pretext runs SHOULD produce a representation model via mlso:producesRepresentation" ;
+    sh:property [ sh:message "producesRepresentation must reference a Model (representation)" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:producesRepresentation ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:producesRepresentation .
+
+<http://w3id.org/mlsea/shapes/UsesRepresentationShape> a sh:NodeShape ;
+    rdfs:label "Uses Representation Validation" ;
+    sh:message "Downstream runs SHOULD use a representation from pretrain via mlso:usesRepresentation" ;
+    sh:property [ sh:message "usesRepresentation must reference a Model (representation)" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:usesRepresentation ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:usesRepresentation .
+
+# =============================================================================
+# Self-Supervised Learning Shapes
+# =============================================================================
+
+<http://w3id.org/mlsea/shapes/LearningStageShape> a sh:NodeShape ;
+    rdfs:label "Learning Stage Validation" ;
+    sh:message "Self-supervised runs SHOULD specify mlso:hasLearningStage (pretext or downstream)" ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:message "hasLearningStage must be 'pretext' or 'downstream'" ;
+            sh:path mlso:hasLearningStage ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasLearningStage .
+
+<http://w3id.org/mlsea/shapes/PretrainTaskShape> a sh:NodeShape ;
+    rdfs:label "Pretrain Task Validation" ;
+    sh:message "Self-supervised runs SHOULD specify mlso:hasPretrainTask" ;
+    sh:property [ sh:nodeKind sh:IRI ;
+            sh:message "hasPretrainTask should be an IRI reference" ;
+            sh:path mlso:hasPretrainTask ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasPretrainTask .
+
+<http://w3id.org/mlsea/shapes/DownstreamTaskShape> a sh:NodeShape ;
+    rdfs:label "Downstream Task Validation" ;
+    sh:message "Self-supervised runs SHOULD specify mlso:hasDownstreamTask" ;
+    sh:property [ sh:nodeKind sh:IRI ;
+            sh:message "hasDownstreamTask should be an IRI reference" ;
+            sh:path mlso:hasDownstreamTask ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasDownstreamTask .

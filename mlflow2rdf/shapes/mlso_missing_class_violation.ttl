@@ -1,0 +1,36 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# =============================================================================
+# Missing Class Detection
+# Flags rdf:type values used in data that are NOT declared in MLSO/MLST.
+# Severity: VIOLATION - validation FAILS if undeclared class found.
+# =============================================================================
+
+<http://w3id.org/mlsea/shapes/MissingClassViolation> a sh:NodeShape ;
+    rdfs:label "Undeclared Class Detection" ;
+    sh:message "Class '{?class}' is used in rdf:type but is NOT declared in MLSO/MLST. Declare it in the ontology or remove it from the mapper." ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        rdf:type sh:SPARQLConstraint ;
+        sh:select '''
+SELECT DISTINCT $this ?class
+WHERE {
+    ?subject rdf:type ?class .
+    FILTER (
+        !ISBLANK(?class) &&
+        !STRSTARTS(STR(?class), 'http://w3id.org/mlso/') &&
+        !STRSTARTS(STR(?class), 'http://www.w3.org/ns/mls') &&
+        !STRSTARTS(STR(?class), 'http://www.w3.org/2002/07/owl') &&
+        !STRSTARTS(STR(?class), 'http://www.w3.org/2000/01/rdf-schema') &&
+        !STRSTARTS(STR(?class), 'http://www.w3.org/1999/02/22-rdf-syntax-ns') &&
+        !STRSTARTS(STR(?class), 'http://www.w3.org/2004/02/skos') &&
+        !STRSTARTS(STR(?class), 'http://www.w3.org/2011/prov') &&
+        !STRSTARTS(STR(?class), 'http://purl.org/dc/terms') &&
+        !STRSTARTS(STR(?class), 'http://www.w3.org/ns/adms') &&
+        !STRSTARTS(STR(?class), 'http://w3id.org/mlsea/mlflow/')
+    )
+}
+''' ;
+    ] .

@@ -1,0 +1,41 @@
+# Property URI Map
+# Maps MLflow parameter names (snake_case) to MLSO CamelCase property URIs.
+# Used by _get_property_uri() to convert param keys to ontology predicates.
+
+lora_rank: hasLoraRank
+lora_alpha: hasLoraAlpha
+lora_dropout: hasLoraDropout
+target_modules: hasTargetModules
+trainable_params_ratio: hasTrainableParameterRatio
+base_model: hasBaseModel
+adapter_type: hasAdapterType
+forecast_horizon: hasForecastingHorizon
+forecast_horizon_period: hasForecastingHorizon
+horizon: hasForecastingHorizon
+lookback: hasLookbackWindow
+lookback_window: hasLookbackWindow
+seasonality: hasSeasonality
+seasonality_period: hasSeasonality
+frequency: hasFrequency
+learning_stage: hasLearningStage
+max_iterations: hasMaxIterations
+distillation_temperature: hasDistillationTemperature
+distillation_alpha: hasDistillationAlpha
+teacher_model: hasTeacherModel
+student_model: hasStudentModel
+distillation_loss: hasDistillationLoss
+contrastive_temperature: hasContrastiveTemperature
+projection_dimension: hasProjectionDimension
+augmentation_strategy: hasAugmentationStrategy
+contrastive_loss_type: hasContrastiveLossType
+fusion_strategy: hasFusionStrategy
+fusion_operator: hasFusionOperator
+modality_pairing: hasModalityPairing
+image_encoder: hasImageEncoder
+text_encoder: hasTextEncoder
+retrieval_method: hasRetrievalMethod
+top_k: hasTopK
+embedding_model: hasEmbeddingModel
+agent_strategy: hasAgentStrategy
+tool_name: hasToolName
+chunk_size: hasChunkSize

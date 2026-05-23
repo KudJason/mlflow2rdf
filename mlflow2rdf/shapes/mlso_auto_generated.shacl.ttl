@@ -1,0 +1,264 @@
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix mls: <http://www.w3.org/ns/mls#> .
+@prefix mlso: <http://w3id.org/mlso/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://w3id.org/mlso/shapes/AlgorithmShape> a sh:NodeShape ;
+    rdfs:label "Shape for Algorithm" ;
+    sh:property [ sh:class skos:Concept ;
+            sh:message "hasAlgorithmType must reference a concept from the ml_algorithm taxonomy (http://w3id.org/mlso/vocab/ml_algorithm/)"@en ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasAlgorithmType ;
+            sh:pattern "^http:\\/\\/w3id.org\\/mlso\\/vocab\\/ml_algorithm\\/" ;
+            sh:severity sh:Warning ],
+        [ sh:class skos:Concept ;
+            sh:message "hasLearningMethodType must reference a concept from the learning_method taxonomy (http://w3id.org/mlso/vocab/learning_method/)"@en ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasLearningMethodType ;
+            sh:pattern "^http:\\/\\/w3id.org\\/mlso\\/vocab\\/learning_method\\/" ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Algorithm .
+
+<http://w3id.org/mlso/shapes/CatalogShape> a sh:NodeShape ;
+    rdfs:label "Shape for Catalog" ;
+    sh:targetClass dcat:Catalog .
+
+<http://w3id.org/mlso/shapes/DataCharacteristicShape> a sh:NodeShape ;
+    rdfs:label "Shape for DataCharacteristic" ;
+    sh:property [ sh:class skos:Concept ;
+            sh:message "hasDataCharacteristicType must reference a concept from the dataset_characteristic taxonomy (http://w3id.org/mlso/vocab/dataset_characteristic/)"@en ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasDataCharacteristicType ;
+            sh:pattern "^http:\\/\\/w3id.org\\/mlso\\/vocab\\/dataset_characteristic\\/" ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:DataCharacteristic .
+
+<http://w3id.org/mlso/shapes/DataModalityShape> a sh:NodeShape ;
+    rdfs:label "Shape for DataModality" ;
+    sh:targetClass mlso:DataModality .
+
+<http://w3id.org/mlso/shapes/DataServiceShape> a sh:NodeShape ;
+    rdfs:label "Shape for DataService" ;
+    sh:targetClass dcat:DataService .
+
+<http://w3id.org/mlso/shapes/DataShape> a sh:NodeShape ;
+    rdfs:label "Shape for Data" ;
+    sh:property [ sh:class <http://edamontology.org/format_1950> ;
+            sh:message "hasFormat should point to format_1950 (A relation between a data file and its format.)"@en ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasFormat ;
+            sh:severity sh:Warning ],
+        [ sh:class mls:Data ;
+            sh:message "hasVariant should point to Data (A relation between two data entities that share significant similarities but differ in certain characteristics or aspects.)"@en ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasVariant ;
+            sh:severity sh:Warning ],
+        [ sh:datatype xsd:anyURI ;
+            sh:message "hasDataLoaderLocation should be anyURI"@en ;
+            sh:path mlso:hasDataLoaderLocation ;
+            sh:severity sh:Warning ],
+        [ sh:class mlso:DataModality ;
+            sh:message "hasModality should point to DataModality (A relation between a data entity and its data modality.)"@en ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasModality ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Data .
+
+<http://w3id.org/mlso/shapes/DatasetCharacteristicShape> a sh:NodeShape ;
+    rdfs:label "Shape for DatasetCharacteristic" ;
+    sh:targetClass mls:DatasetCharacteristic .
+
+<http://w3id.org/mlso/shapes/DatasetShape> a sh:NodeShape ;
+    rdfs:label "Shape for Dataset" ;
+    sh:property [ sh:message "Dataset SHOULD have dcterms:title"@en ;
+            sh:minCount 1 ;
+            sh:path dcterms:title ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Dataset .
+
+<http://w3id.org/mlso/shapes/DistributionShape> a sh:NodeShape ;
+    rdfs:label "Shape for Distribution" ;
+    sh:property [ sh:datatype rdfs:Literal ;
+            sh:message "hasMD5 should be Literal"@en ;
+            sh:path mlso:hasMD5 ;
+            sh:severity sh:Warning ],
+        [ sh:class mls:Feature ;
+            sh:message "ignoresFeature should point to Feature (A relation between a dataset and a feature that is to be ignored when processing the dataset.)"@en ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:ignoresFeature ;
+            sh:severity sh:Warning ],
+        [ sh:class mls:Feature ;
+            sh:message "hasDefaultTargetFeature should point to Feature (A relation between a dataset and a feature that is the default target feature.)"@en ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasDefaultTargetFeature ;
+            sh:severity sh:Warning ],
+        [ sh:class mls:Feature ;
+            sh:message "hasIdFeature should point to Feature (A relation between a dataset and a feature that is used for identifying the different instances of the dataset.)"@en ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasIdFeature ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass dcat:Distribution .
+
+<http://w3id.org/mlso/shapes/EvaluationProcedureShape> a sh:NodeShape ;
+    rdfs:label "Shape for EvaluationProcedure" ;
+    sh:property [ sh:class skos:Concept ;
+            sh:message "hasEvaluationProcedureType must reference a concept from the estimation_procedure taxonomy (http://w3id.org/mlso/vocab/estimation_procedure/)"@en ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasEvaluationProcedureType ;
+            sh:pattern "^http:\\/\\/w3id.org\\/mlso\\/vocab\\/estimation_procedure\\/" ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:EvaluationProcedure .
+
+<http://w3id.org/mlso/shapes/EvaluationSpecificationShape> a sh:NodeShape ;
+    rdfs:label "Shape for EvaluationSpecification" ;
+    sh:targetClass mls:EvaluationSpecification .
+
+<http://w3id.org/mlso/shapes/ExperimentShape> a sh:NodeShape ;
+    rdfs:label "Shape for Experiment" ;
+    sh:targetClass mls:Experiment .
+
+<http://w3id.org/mlso/shapes/FeatureCharacteristicShape> a sh:NodeShape ;
+    rdfs:label "Shape for FeatureCharacteristic" ;
+    sh:targetClass mls:FeatureCharacteristic .
+
+<http://w3id.org/mlso/shapes/FeatureShape> a sh:NodeShape ;
+    rdfs:label "Shape for Feature" ;
+    sh:targetClass mls:Feature .
+
+<http://w3id.org/mlso/shapes/HyperParameterCharacteristicShape> a sh:NodeShape ;
+    rdfs:label "Shape for HyperParameterCharacteristic" ;
+    sh:targetClass mlso:HyperParameterCharacteristic .
+
+<http://w3id.org/mlso/shapes/HyperParameterSettingShape> a sh:NodeShape ;
+    rdfs:label "Shape for HyperParameterSetting" ;
+    sh:property [ sh:maxCount 1 ;
+            sh:message "HyperParameterSetting MUST have mls:specifiedBy"@en ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path mls:specifiedBy ;
+            sh:severity sh:Violation ],
+        [ sh:maxCount 1 ;
+            sh:message "HyperParameterSetting MUST have mls:hasValue"@en ;
+            sh:minCount 1 ;
+            sh:path mls:hasValue ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass mls:HyperParameterSetting .
+
+<http://w3id.org/mlso/shapes/HyperParameterShape> a sh:NodeShape ;
+    rdfs:label "Shape for HyperParameter" ;
+    sh:targetClass mls:HyperParameter .
+
+<http://w3id.org/mlso/shapes/ImplementationCharacteristicShape> a sh:NodeShape ;
+    rdfs:label "Shape for ImplementationCharacteristic" ;
+    sh:targetClass mls:ImplementationCharacteristic .
+
+<http://w3id.org/mlso/shapes/ImplementationShape> a sh:NodeShape ;
+    rdfs:label "Shape for Implementation" ;
+    sh:targetClass mls:Implementation .
+
+<http://w3id.org/mlso/shapes/InformationEntityShape> a sh:NodeShape ;
+    rdfs:label "Shape for InformationEntity" ;
+    sh:property [ sh:class mls:Software ;
+            sh:message "hasRelatedSoftware should point to Software (A relation between an entity and a software implementation that leverages or references this entity.)"@en ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasRelatedSoftware ;
+            sh:severity sh:Warning ],
+        [ sh:class mls:Implementation ;
+            sh:message "hasRelatedImplementation should point to Implementation (A relation between an entity and a machine learning implementation that leverages it by using it as a resource.)"@en ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasRelatedImplementation ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:InformationEntity .
+
+<http://w3id.org/mlso/shapes/ModelCharacteristicShape> a sh:NodeShape ;
+    rdfs:label "Shape for ModelCharacteristic" ;
+    sh:targetClass mls:ModelCharacteristic .
+
+<http://w3id.org/mlso/shapes/ModelEvaluationShape> a sh:NodeShape ;
+    rdfs:label "Shape for ModelEvaluation" ;
+    sh:property [ sh:maxCount 1 ;
+            sh:message "ModelEvaluation MUST have mls:hasValue"@en ;
+            sh:minCount 1 ;
+            sh:path mls:hasValue ;
+            sh:severity sh:Violation ],
+        [ sh:maxCount 1 ;
+            sh:message "ModelEvaluation MUST have mls:specifiedBy"@en ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path mls:specifiedBy ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass mls:ModelEvaluation .
+
+<http://w3id.org/mlso/shapes/ModelShape> a sh:NodeShape ;
+    rdfs:label "Shape for Model" ;
+    sh:property [ sh:class mls:Data ;
+            sh:message "trainedOn should point to Data (A relation between a machine learning model and the data that it was trained on.)"@en ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:trainedOn ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Model .
+
+<http://w3id.org/mlso/shapes/ProcessShape> a sh:NodeShape ;
+    rdfs:label "Shape for Process" ;
+    sh:targetClass mls:Process .
+
+<http://w3id.org/mlso/shapes/QualityShape> a sh:NodeShape ;
+    rdfs:label "Shape for Quality" ;
+    sh:targetClass mls:Quality .
+
+<http://w3id.org/mlso/shapes/RunShape> a sh:NodeShape ;
+    rdfs:label "Shape for Run" ;
+    sh:property [ sh:message "Run SHOULD have mls:hasInput"@en ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path mls:hasInput ;
+            sh:severity sh:Warning ],
+        [ sh:maxCount 1 ;
+            sh:message "Run MUST have dcterms:identifier"@en ;
+            sh:minCount 1 ;
+            sh:path dcterms:identifier ;
+            sh:severity sh:Violation ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:message "Run MUST have dcterms:created"@en ;
+            sh:minCount 1 ;
+            sh:path dcterms:created ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass mls:Run .
+
+<http://w3id.org/mlso/shapes/SKOSConceptShape> a sh:NodeShape ;
+    rdfs:label "Shape for SKOS Concept" ;
+    sh:property [ sh:message "Every skos:Concept SHOULD have a skos:prefLabel"@en ;
+            sh:minCount 1 ;
+            sh:path skos:prefLabel ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass skos:Concept .
+
+<http://w3id.org/mlso/shapes/ScientificWorkShape> a sh:NodeShape ;
+    rdfs:label "Shape for ScientificWork" ;
+    sh:targetClass mlso:ScientificWork .
+
+<http://w3id.org/mlso/shapes/SourceCodeShape> a sh:NodeShape ;
+    rdfs:label "Shape for SourceCode" ;
+    sh:targetClass <https://w3id.org/okn/o/sd#SourceCode> .
+
+<http://w3id.org/mlso/shapes/StudyShape> a sh:NodeShape ;
+    rdfs:label "Shape for Study" ;
+    sh:targetClass mls:Study .
+
+<http://w3id.org/mlso/shapes/TaskShape> a sh:NodeShape ;
+    rdfs:label "Shape for Task" ;
+    sh:property [ sh:datatype rdfs:Literal ;
+            sh:message "hasTrainTestSplitIndices should be Literal"@en ;
+            sh:path mlso:hasTrainTestSplitIndices ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Task .
+
+<http://w3id.org/mlso/shapes/format_1950Shape> a sh:NodeShape ;
+    rdfs:label "Shape for format_1950" ;
+    sh:targetClass <http://edamontology.org/format_1950> .
+

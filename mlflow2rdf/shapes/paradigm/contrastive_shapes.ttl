@@ -1,0 +1,51 @@
+@prefix mlso: <http://w3id.org/mlso/> .
+@prefix mls: <http://www.w3.org/ns/mls#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# Contrastive Learning Shapes
+# Validates: M2b (SimCLR, CLIP, MoCo)
+# Domain: mls:Algorithm
+# =============================================================================
+
+<http://w3id.org/mlsea/shapes/ContrastiveTemperatureShape> a sh:NodeShape ;
+    rdfs:label "Contrastive Temperature Validation" ;
+    sh:message "Contrastive learning experiments SHOULD specify mlso:hasContrastiveTemperature (typical: 0.01-0.1)" ;
+    sh:property [ sh:datatype xsd:float ;
+            sh:maxInclusive 1.0 ;
+            sh:message "hasContrastiveTemperature must be a float between 0.0 and 1.0" ;
+            sh:minExclusive 0.0 ;
+            sh:path mlso:hasContrastiveTemperature ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasContrastiveTemperature .
+
+<http://w3id.org/mlsea/shapes/ProjectionDimensionShape> a sh:NodeShape ;
+    rdfs:label "Projection Dimension Validation" ;
+    sh:message "Contrastive learning experiments SHOULD specify mlso:hasProjectionDimension (typical: 64-512)" ;
+    sh:property [ sh:datatype xsd:integer ;
+            sh:minInclusive 1 ;
+            sh:message "hasProjectionDimension must be a positive integer" ;
+            sh:path mlso:hasProjectionDimension ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasProjectionDimension .
+
+<http://w3id.org/mlsea/shapes/AugmentationStrategyShape> a sh:NodeShape ;
+    rdfs:label "Augmentation Strategy Validation" ;
+    sh:message "Contrastive learning experiments SHOULD specify mlso:hasAugmentationStrategy" ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:message "hasAugmentationStrategy must be a string describing augmentation pipeline" ;
+            sh:path mlso:hasAugmentationStrategy ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasAugmentationStrategy .
+
+<http://w3id.org/mlsea/shapes/ContrastiveLossTypeShape> a sh:NodeShape ;
+    rdfs:label "Contrastive Loss Type Validation" ;
+    sh:message "Contrastive learning experiments SHOULD specify mlso:hasContrastiveLossType (e.g., NTXentLoss, TripletLoss, MoCOLoss)" ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:message "hasContrastiveLossType must be a string" ;
+            sh:path mlso:hasContrastiveLossType ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasContrastiveLossType .

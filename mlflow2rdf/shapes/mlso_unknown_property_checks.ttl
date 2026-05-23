@@ -1,0 +1,68 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# =============================================================================
+# MLSO Unknown Property Detection Shapes
+#
+# Purpose: Flag any predicate (property) used in the data graph that is NOT
+# declared in MLSO, MLS, MLSEA, or any recognized standard namespace.
+#
+# Severity: VIOLATION — validation FAILS if unknown property found.
+#
+# Allowed namespaces:
+#   http://w3id.org/mlso/          — MLSO ontology
+#   http://w3id.org/mlsea/        — MLSEA extensions
+#   http://www.w3.org/ns/mls#     — W3C MLS standard
+#   http://www.w3.org/2001/XMLSchema# — XSD datatypes
+#   http://www.w3.org/2002/07/owl#   — OWL
+#   http://www.w3.org/2000/01/rdf-schema# — RDFS
+#   http://www.w3id.org/mlsea/mlflow/ — MLFlow local namespace
+#   http://w3id.org/mlsea/tag/     — MLFlow dynamic tag namespace
+#   http://www.w3.org/1999/02/22-rdf-syntax-ns# — RDF
+#   http://www.w3.org/2004/02/skos/core# — SKOS
+#   http://www.w3.org/2011/prov#    — PROV-O
+#   http://purl.org/dc/terms/       — DCTERMS
+#   http://www.w3.org/ns/adms#     — ADMS
+#   http://schema.org/             — Schema.org
+#   http://www.w3.org/2004/02/skos/core# — SKOS
+#
+# Any predicate from another namespace = VIOLATION.
+# =============================================================================
+
+<http://w3id.org/mlsea/shapes/UnknownPropertyShape> a sh:NodeShape ;
+    rdfs:label "Unknown Property Detection" ;
+    sh:message "Predicate '{?predicate}' is not from a recognized namespace (MLSO, MLS, MLSEA, RDF, RDFS, OWL, SKOS, PROV, DCTERMS, ADMS, XSD, or Schema.org). This property is not formally declared in any ontology." ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        rdf:type sh:SPARQLConstraint ;
+        sh:prefixes <http://w3id.org/mlsea/shapes/prefixes> ;
+        sh:select """
+SELECT $this ?predicate
+WHERE {
+    ?subject ?predicate ?object .
+    FILTER (
+        !ISBLANK(?predicate) &&
+        !STRSTARTS(STR(?predicate), 'http://w3id.org/mlso/') &&
+        !STRSTARTS(STR(?predicate), 'http://w3id.org/mlsea/') &&
+        !STRSTARTS(STR(?predicate), 'http://www.w3.org/ns/mls') &&
+        !STRSTARTS(STR(?predicate), 'http://www.w3.org/2001/XMLSchema') &&
+        !STRSTARTS(STR(?predicate), 'http://www.w3.org/2002/07/owl') &&
+        !STRSTARTS(STR(?predicate), 'http://www.w3.org/2000/01/rdf-schema') &&
+        !STRSTARTS(STR(?predicate), 'http://www.w3.org/1999/02/22-rdf-syntax-ns') &&
+        !STRSTARTS(STR(?predicate), 'http://www.w3.org/2004/02/skos') &&
+        !STRSTARTS(STR(?predicate), 'http://www.w3.org/2011/prov') &&
+        !STRSTARTS(STR(?predicate), 'http://purl.org/dc/terms') &&
+        !STRSTARTS(STR(?predicate), 'http://www.w3.org/ns/adms') &&
+        !STRSTARTS(STR(?predicate), 'http://schema.org/') &&
+        !STRSTARTS(STR(?predicate), 'http://w3id.org/mlsea/mlflow/') &&
+        !STRSTARTS(STR(?predicate), 'http://w3id.org/mlsea/tag/')
+    )
+}
+""" ;
+    ] .
+
+<http://w3id.org/mlsea/shapes/prefixes> sh:declare [
+    sh:prefix "" ;
+    sh:namespace "http://w3id.org/mlsea/shapes/"^^rdf:HTML ;
+] .

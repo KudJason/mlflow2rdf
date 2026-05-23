@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mlflow2rdf"
+version = "0.2.0"
+description = "Convert MLflow tracking data into MLSO-aligned RDF Knowledge Graphs"
+readme = "PACKAGE_README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+authors = [
+    {name = "Master Thesis Project"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "mlflow>=2.0.0",
+    "rdflib>=6.0.0",
+    "pyshacl>=0.25.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "build", "twine"]
+
+[project.urls]
+Homepage = "https://github.com/dtai-kg/MLSO"
+Repository = "https://github.com/jasonjia-ml/MLSO"
+
+[project.scripts]
+mlflow2rdf = "mlflow2rdf.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["mlflow2rdf*"]
+
+[tool.setuptools.package-data]
+mlflow2rdf = ["shapes/*.ttl", "shapes/**/*.ttl"]

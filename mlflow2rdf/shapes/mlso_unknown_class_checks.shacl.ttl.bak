@@ -1,0 +1,66 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# Detect classes used in data that are NOT declared as owl:Class or skos:Concept in the loaded ontology.
+# NOTE: This requires the MLSO ontology TTL files to be loaded as data during validation.
+# FIXED: Added skos:Concept to allowed types since MLSO uses SKOS taxonomy design.
+
+<http://w3id.org/mlso/shapes/UnknownClassCheckShape> a sh:NodeShape ;
+    sh:targetNode sh:AllNodes ;
+    sh:sparql [
+        sh:message "Data uses rdf:type with a class not declared in the loaded ontology (owl:Class or skos:Concept): {?c}" ;
+        sh:severity sh:Violation ;
+                sh:select """
+                        SELECT ?this ?value ?c
+                        WHERE {
+                            ?s rdf:type ?c .
+                            FILTER(isIRI(?c))
+                            FILTER NOT EXISTS { ?c a owl:Class }
+                            FILTER NOT EXISTS { ?c a skos:Concept }
+                            FILTER(
+                                !STRSTARTS(STR(?c), "http://www.w3.org/2002/07/owl#") &&
+                                !STRSTARTS(STR(?c), "http://www.w3.org/1999/02/22-rdf-syntax-ns#") &&
+                                !STRSTARTS(STR(?c), "http://www.w3.org/2000/01/rdf-schema#") &&
+                                !STRSTARTS(STR(?c), "http://www.w3.org/ns/shacl#") &&
+                                !STRSTARTS(STR(?c), "http://www.w3.org/2001/XMLSchema#") &&
+                                !STRSTARTS(STR(?c), "http://www.w3.org/ns/mls#") &&
+                                !STRSTARTS(STR(?c), "http://www.w3.org/ns/dcat#") &&
+                                !STRSTARTS(STR(?c), "http://purl.org/dc/terms/") &&
+                                !STRSTARTS(STR(?c), "http://www.w3.org/2004/02/skos/core#")
+                            )
+                            BIND(?c AS ?value)
+                        }
+                """
+    ] .
+
+<http://w3id.org/mlso/shapes/UnknownPredicateCheckShape> a sh:NodeShape ;
+        sh:targetNode sh:AllNodes ;
+        sh:sparql [
+                sh:message "Data uses a predicate not declared in the loaded ontology (owl:ObjectProperty/owl:DatatypeProperty/owl:AnnotationProperty): {?p}" ;
+                sh:severity sh:Violation ;
+                sh:select """
+                        SELECT ?this ?value ?p
+                        WHERE {
+                            ?s ?p ?o .
+                            FILTER(isIRI(?p))
+                            FILTER(?p != rdf:type)
+                            FILTER NOT EXISTS { ?p a owl:ObjectProperty }
+                            FILTER NOT EXISTS { ?p a owl:DatatypeProperty }
+                            FILTER NOT EXISTS { ?p a owl:AnnotationProperty }
+                            FILTER(
+                                !STRSTARTS(STR(?p), "http://www.w3.org/2002/07/owl#") &&
+                                !STRSTARTS(STR(?p), "http://www.w3.org/1999/02/22-rdf-syntax-ns#") &&
+                                !STRSTARTS(STR(?p), "http://www.w3.org/2000/01/rdf-schema#") &&
+                                !STRSTARTS(STR(?p), "http://www.w3.org/ns/shacl#") &&
+                                !STRSTARTS(STR(?p), "http://www.w3.org/2001/XMLSchema#") &&
+                                !STRSTARTS(STR(?p), "http://www.w3.org/ns/mls#") &&
+                                !STRSTARTS(STR(?p), "http://www.w3.org/ns/dcat#") &&
+                                !STRSTARTS(STR(?p), "http://purl.org/dc/terms/") &&
+                                !STRSTARTS(STR(?p), "http://www.w3.org/2004/02/skos/core#")
+                            )
+                            BIND(?p AS ?value)
+                        }
+                """
+        ] .

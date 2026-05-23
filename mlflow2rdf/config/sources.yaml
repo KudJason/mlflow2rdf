@@ -1,0 +1,42 @@
+# MLflow 数据源配置
+# 声明式配置：数据源连接信息
+
+mlflow:
+  type: mlflow
+  uri: http://localhost:5000
+  api_version: 2.0
+
+  # 数据提取配置
+  extraction:
+    experiments:
+      enabled: true
+      filter_string: ""
+    runs:
+      enabled: true
+      experiment_ids: ["0", "1"]
+      max_results: 1000
+    params:
+      enabled: true
+    metrics:
+      enabled: true
+    tags:
+      enabled: true
+
+# 输出配置
+output:
+  format: turtle
+  path: ./data/output.ttl
+
+  # 命名空间配置
+  namespaces:
+    mlso: http://w3id.org/mlso/
+    mls: http://www.w3.org/ns/mls#
+    mlsea: http://w3id.org/mlsea/
+    dcat: http://www.w3.org/ns/dcat#
+    prov: http://www.w3.org/ns/prov#
+    dcterms: http://purl.org/dc/terms/
+    rdfs: http://www.w3.org/2000/01/rdf-schema#
+    rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+    skos: http://www.w3.org/2004/02/skos/core#
+    adms: http://www.w3.org/ns/adms#
+    foaf: http://xmlns.com/foaf/0.1/

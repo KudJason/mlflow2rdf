@@ -1,0 +1,105 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix mlso: <http://w3id.org/mlso/> .
+@prefix mls: <http://www.w3.org/ns/mls#> .
+
+# =============================================================================
+# Artifact Subclass Declaration Shapes
+#
+# Purpose: Ensure that artifact type instances are properly typed.
+# The MLflow2RDF mapper uses 9 artifact subclasses that are NOT declared
+# as subclasses of mlso:Artifact. This shape validates that if an instance
+# has one of these types, it should also be typed as mlso:Artifact.
+#
+# Severity: Warning (non-blocking) — these classes lack formal subclass
+# declarations but are intentionally used by the mapper.
+#
+# Recommendation: Add rdfs:subClassOf declarations to mlso-mlflow-extensions.ttl:
+#   mlso:ConfusionMatrix rdfs:subClassOf mlso:Artifact .
+#   mlso:ROCCurve rdfs:subClassOf mlso:Artifact .
+#   ... etc.
+#
+# Reference: docs/MLSOMLST-MissingConcepts.md Category 1
+# =============================================================================
+
+<http://w3id.org/mlsea/shapes/ConfusionMatrixArtifactShape> a sh:NodeShape ;
+    rdfs:label "ConfusionMatrix Artifact Validation" ;
+    sh:message "ConfusionMatrix artifacts should also be typed as mlso:Artifact" ;
+    sh:property [ sh:nodeKind sh:IRI ;
+                  sh:path rdf:type ;
+                  sh:hasValue mlso:Artifact ;
+                  sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:ConfusionMatrix .
+
+<http://w3id.org/mlsea/shapes/ROCCurveArtifactShape> a sh:NodeShape ;
+    rdfs:label "ROCCurve Artifact Validation" ;
+    sh:message "ROCCurve artifacts should also be typed as mlso:Artifact" ;
+    sh:property [ sh:nodeKind sh:IRI ;
+                  sh:path rdf:type ;
+                  sh:hasValue mlso:Artifact ;
+                  sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:ROCCurve .
+
+<http://w3id.org/mlsea/shapes/ImageArtifactShape> a sh:NodeShape ;
+    rdfs:label "ImageArtifact Validation" ;
+    sh:message "ImageArtifact instances should also be typed as mlso:Artifact" ;
+    sh:property [ sh:nodeKind sh:IRI ;
+                  sh:path rdf:type ;
+                  sh:hasValue mlso:Artifact ;
+                  sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:ImageArtifact .
+
+<http://w3id.org/mlsea/shapes/TextVectorizerArtifactShape> a sh:NodeShape ;
+    rdfs:label "TextVectorizer Artifact Validation" ;
+    sh:message "TextVectorizer artifacts should also be typed as mlso:Artifact" ;
+    sh:property [ sh:nodeKind sh:IRI ;
+                  sh:path rdf:type ;
+                  sh:hasValue mlso:Artifact ;
+                  sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:TextVectorizer .
+
+<http://w3id.org/mlsea/shapes/TokenizerArtifactShape> a sh:NodeShape ;
+    rdfs:label "Tokenizer Artifact Validation" ;
+    sh:message "Tokenizer artifacts should also be typed as mlso:Artifact" ;
+    sh:property [ sh:nodeKind sh:IRI ;
+                  sh:path rdf:type ;
+                  sh:hasValue mlso:Artifact ;
+                  sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:Tokenizer .
+
+<http://w3id.org/mlsea/shapes/FeatureImportanceArtifactShape> a sh:NodeShape ;
+    rdfs:label "FeatureImportance Artifact Validation" ;
+    sh:message "FeatureImportance artifacts should also be typed as mlso:Artifact" ;
+    sh:property [ sh:nodeKind sh:IRI ;
+                  sh:path rdf:type ;
+                  sh:hasValue mlso:Artifact ;
+                  sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:FeatureImportance .
+
+<http://w3id.org/mlsea/shapes/TabularArtifactShape> a sh:NodeShape ;
+    rdfs:label "TabularArtifact Validation" ;
+    sh:message "TabularArtifact instances should also be typed as mlso:Artifact" ;
+    sh:property [ sh:nodeKind sh:IRI ;
+                  sh:path rdf:type ;
+                  sh:hasValue mlso:Artifact ;
+                  sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:TabularArtifact .
+
+<http://w3id.org/mlsea/shapes/ModelArtifactShape> a sh:NodeShape ;
+    rdfs:label "ModelArtifact Validation" ;
+    sh:message "ModelArtifact instances should also be typed as mlso:Artifact" ;
+    sh:property [ sh:nodeKind sh:IRI ;
+                  sh:path rdf:type ;
+                  sh:hasValue mlso:Artifact ;
+                  sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:ModelArtifact .
+
+<http://w3id.org/mlsea/shapes/ConfigurationArtifactShape> a sh:NodeShape ;
+    rdfs:label "ConfigurationArtifact Validation" ;
+    sh:message "ConfigurationArtifact instances should also be typed as mlso:Artifact" ;
+    sh:property [ sh:nodeKind sh:IRI ;
+                  sh:path rdf:type ;
+                  sh:hasValue mlso:Artifact ;
+                  sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:ConfigurationArtifact .

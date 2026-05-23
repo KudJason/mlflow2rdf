@@ -1,0 +1,62 @@
+@prefix mlso: <http://w3id.org/mlso/> .
+@prefix mls: <http://www.w3.org/ns/mls#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# Diffusion / Generative Model Shapes
+# Validates: M2e (VAE, DDPM, Stable Diffusion)
+# =============================================================================
+
+<http://w3id.org/mlsea/shapes/DiffusionParadigmShape> a sh:NodeShape ;
+    rdfs:label "Diffusion Paradigm Validation" ;
+    sh:message "Generative-diffusion experiments SHOULD specify the diffusion algorithm type via mlso:hasAlgorithmType" ;
+    sh:property [ sh:message "hasAlgorithmType should be an IRI reference (e.g., mlso:DDPM, mlso:StableDiffusion)" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasAlgorithmType ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf <http://w3id.org/mlsea/tag/mlsea-paradigm/generative-diffusion> .
+
+<http://w3id.org/mlsea/shapes/DiffusionBetaScheduleShape> a sh:NodeShape ;
+    rdfs:label "Diffusion Beta Schedule Validation" ;
+    sh:message "Diffusion experiments SHOULD have beta-start < beta-end values between 0 and 1" ;
+    sh:property [ sh:datatype xsd:decimal ;
+            sh:maxInclusive 1.0 ;
+            sh:message "beta-start must be between 0.0 and 1.0" ;
+            sh:minInclusive 0.0 ;
+            sh:path <http://w3id.org/mlsea/mlflow/hyperparameter/beta-start> ;
+            sh:severity sh:Warning ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxInclusive 1.0 ;
+            sh:message "beta-end must be between 0.0 and 1.0" ;
+            sh:minInclusive 0.0 ;
+            sh:path <http://w3id.org/mlsea/mlflow/hyperparameter/beta-end> ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf <http://w3id.org/mlsea/mlflow/hyperparameter/beta-start> .
+
+<http://w3id.org/mlsea/shapes/DiffusionTimestepsShape> a sh:NodeShape ;
+    rdfs:label "Diffusion Timesteps Validation" ;
+    sh:message "Diffusion experiments SHOULD specify number of diffusion timesteps" ;
+    sh:property [ sh:datatype xsd:integer ;
+            sh:minInclusive 1 ;
+            sh:path <http://w3id.org/mlsea/mlflow/hyperparameter/num-timesteps> ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf <http://w3id.org/mlsea/mlflow/hyperparameter/num-timesteps> .
+
+<http://w3id.org/mlsea/shapes/VAEArchitectureShape> a sh:NodeShape ;
+    rdfs:label "VAE Architecture Validation" ;
+    sh:message "VAE experiments SHOULD have latent dimension specified" ;
+    sh:property [ sh:message "VAE experiments should specify latent dimensions" ;
+            sh:path <http://w3id.org/mlsea/mlflow/hyperparameter/latent-dim> ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf <http://w3id.org/mlsea/mlflow/hyperparameter/latent-dim> .
+
+<http://w3id.org/mlsea/shapes/GenerativeLossShape> a sh:NodeShape ;
+    rdfs:label "Generative Model Loss Validation" ;
+    sh:message "Generative models SHOULD log appropriate loss metrics (e.g., diffusion-loss, elbo, reconstruction-loss)" ;
+    sh:property [ sh:message "Generative experiments should log loss metrics" ;
+            sh:path mls:hasLoss ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf <http://w3id.org/mlsea/mlflow/metric/diffusion-loss> .

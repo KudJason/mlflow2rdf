@@ -1,0 +1,45 @@
+# Paradigm Property Routing Configuration
+# Routes MLflow parameters to the correct RDF entity level.
+# Each parameter key maps to one of: model, run, algorithm, or data.
+
+model:
+  - lora_rank
+  - lora_alpha
+  - lora_dropout
+  - target_modules
+  - trainable_params_ratio
+  - base_model
+  - adapter_type
+
+run:
+  - forecast_horizon
+  - lookback
+  - lookback_window
+  - seasonality
+  - seasonality_period
+  - learning_stage
+  - max_iterations
+
+algorithm:
+  - distillation_temperature
+  - distillation_alpha
+  - teacher_model
+  - student_model
+  - distillation_loss
+  - contrastive_temperature
+  - projection_dimension
+  - augmentation_strategy
+  - contrastive_loss_type
+  - fusion_strategy
+  - fusion_operator
+  - modality_pairing
+  - image_encoder
+  - text_encoder
+  - retrieval_method
+  - top_k
+  - embedding_model
+  - agent_strategy
+  - tool_name
+
+data:
+  - chunk_size

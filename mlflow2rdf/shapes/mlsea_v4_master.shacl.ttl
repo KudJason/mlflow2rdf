@@ -1,0 +1,39 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+# =============================================================================
+# MLSO V4 Master SHACL Shapes Graph
+# Imports all validation modules for complete SHACL validation.
+# =============================================================================
+
+<mlsea_v4_validation.shacl.ttl> a sh:ShapesGraph ;
+    sh:imports <mlsea_v4_validation.shacl.ttl> .
+
+<mlsea_mapping_validation.shacl.ttl> a sh:ShapesGraph ;
+    sh:imports <mlsea_mapping_validation.shacl.ttl> .
+
+<paradigm/parameter_efficient_shapes.ttl> a sh:ShapesGraph ;
+    sh:imports <paradigm/parameter_efficient_shapes.ttl> .
+
+<paradigm/diffusion_shapes.ttl> a sh:ShapesGraph ;
+    sh:imports <paradigm/diffusion_shapes.ttl> .
+
+<paradigm/forecasting_shapes.ttl> a sh:ShapesGraph ;
+    sh:imports <paradigm/forecasting_shapes.ttl> .
+
+<paradigm/multimodal_shapes.ttl> a sh:ShapesGraph ;
+    sh:imports <paradigm/multimodal_shapes.ttl> .
+
+<paradigm/distillation_shapes.ttl> a sh:ShapesGraph ;
+    sh:imports <paradigm/distillation_shapes.ttl> .
+
+<paradigm/contrastive_shapes.ttl> a sh:ShapesGraph ;
+    sh:imports <paradigm/contrastive_shapes.ttl> .
+
+<paradigm/pipeline_relationships.ttl> a sh:ShapesGraph ;
+    sh:imports <paradigm/pipeline_relationships.ttl> .
+
+<mlso_missing_property_violation.ttl> a sh:ShapesGraph ;
+    sh:imports <mlso_missing_property_violation.ttl> .
+
+<mlso_missing_class_violation.ttl> a sh:ShapesGraph ;
+    sh:imports <mlso_missing_class_violation.ttl> .

@@ -1,0 +1,118 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# =============================================================================
+# MLSO Unknown Class Detection Shapes
+#
+# Purpose: Flag any rdf:type value (class URI) used in the data graph that
+# is NOT declared in MLSO, MLS, or any recognized standard namespace.
+#
+# Severity: VIOLATION — validation FAILS if unknown class found.
+#
+# This replaces the deprecated (empty) mlso_unknown_class_checks.shacl.ttl.
+#
+# Known/Allowed class namespaces:
+#   http://w3id.org/mlso/          — MLSO ontology classes
+#   http://www.w3.org/ns/mls#     — W3C MLS classes
+#   http://www.w3.org/2002/07/owl# — OWL metaclasses
+#   http://www.w3.org/2000/01/rdf-schema# — RDFS metaclasses
+#   http://www.w3.org/1999/02/22-rdf-syntax-ns# — RDF metaclasses
+#   http://www.w3.org/2004/02/skos/core# — SKOS concepts (used as classes)
+#   http://www.w3.org/2011/prov#    — PROV-O agents/entities
+#   http://purl.org/dc/terms/       — DCTERMS (occasionally used as class)
+#   http://www.w3.org/ns/adms#     — ADMS
+#   http://w3id.org/mlsea/mlflow/  — MLFlow local classes
+#
+# NOTE: This shape uses a whitelist approach. If MLSO or MLST adds new
+# classes, they should be added to the allowed list below.
+# =============================================================================
+
+<http://w3id.org/mlsea/shapes/UnknownClassShape> a sh:NodeShape ;
+    rdfs:label "Unknown Class Detection" ;
+    sh:message "Class '{?class}' is not from a recognized namespace (MLSO, MLS, RDF, RDFS, OWL, SKOS, PROV, DCTERMS, ADMS, or MLFlow). This class is not formally declared in any ontology." ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        rdf:type sh:SPARQLConstraint ;
+        sh:select """
+SELECT DISTINCT $this ?class
+WHERE {
+    ?subject rdf:type ?class .
+    FILTER (
+        !ISBLANK(?class) &&
+        !STRSTARTS(STR(?class), 'http://w3id.org/mlso/') &&
+        !STRSTARTS(STR(?class), 'http://www.w3.org/ns/mls') &&
+        !STRSTARTS(STR(?class), 'http://www.w3.org/2002/07/owl') &&
+        !STRSTARTS(STR(?class), 'http://www.w3.org/2000/01/rdf-schema') &&
+        !STRSTARTS(STR(?class), 'http://www.w3.org/1999/02/22-rdf-syntax-ns') &&
+        !STRSTARTS(STR(?class), 'http://www.w3.org/2004/02/skos') &&
+        !STRSTARTS(STR(?class), 'http://www.w3.org/2011/prov') &&
+        !STRSTARTS(STR(?class), 'http://purl.org/dc/terms') &&
+        !STRSTARTS(STR(?class), 'http://www.w3.org/ns/adms') &&
+        !STRSTARTS(STR(?class), 'http://w3id.org/mlsea/mlflow/')
+    )
+}
+""" ;
+    ] .
+
+# =============================================================================
+# MLSEA Namespace Undeclared Class Detection
+#
+# Additional check specifically for MLSEA artifact subclasses that are
+# used by the mapper but not declared in any ontology.
+# These are known false positives that should be tracked separately.
+# =============================================================================
+
+<http://w3id.org/mlsea/shapes/MLSEAArtifactSubclassShape> a sh:NodeShape ;
+    rdfs:label "MLSEA Artifact Subclass Detection" ;
+    sh:message "Class '{?class}' is an MLflow artifact subclass used by the mapper but NOT declared as a subclass of mlso:Artifact. Declare it in mlso-mlflow-extensions.ttl or the MLSea ontology." ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        rdf:type sh:SPARQLConstraint ;
+        sh:select """
+SELECT DISTINCT $this ?class
+WHERE {
+    ?subject rdf:type ?class .
+    VALUES ?class {
+        <http://w3id.org/mlso/ConfusionMatrix>
+        <http://w3id.org/mlso/ROCCurve>
+        <http://w3id.org/mlso/ImageArtifact>
+        <http://w3id.org/mlso/TextVectorizer>
+        <http://w3id.org/mlso/Tokenizer>
+        <http://w3id.org/mlso/FeatureImportance>
+        <http://w3id.org/mlso/TabularArtifact>
+        <http://w3id.org/mlso/ModelArtifact>
+        <http://w3id.org/mlso/ConfigurationArtifact>
+    }
+}
+""" ;
+    ] .
+
+# =============================================================================
+# MLSEA Namespace Undeclared Property Detection
+#
+# Additional check specifically for MLSEA properties that are used in
+# base_mapper.py but NOT declared in any ontology file.
+# These cause VIOLATION because they are from MLSEA namespace but undeclared.
+# =============================================================================
+
+<http://w3id.org/mlsea/shapes/MLSEAPropertyShape> a sh:NodeShape ;
+    rdfs:label "MLSEA Undeclared Property Detection" ;
+    sh:message "Property '{?prop}' is used by the MLflow2RDF mapper but is NOT formally declared in mlsea-ontology.ttl or any other ontology file. Declare it to fix this violation." ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        rdf:type sh:SPARQLConstraint ;
+        sh:select """
+SELECT DISTINCT $this ?prop
+WHERE {
+    ?s ?prop ?o .
+    VALUES ?prop {
+        <http://w3id.org/mlsea/rowCount>
+        <http://w3id.org/mlsea/featureCount>
+        <http://w3id.org/mlsea/targetName>
+        <http://w3id.org/mlsea/entryPointName>
+        <http://w3id.org/mlsea/lifecycleStage>
+    }
+}
+""" ;
+    ] .

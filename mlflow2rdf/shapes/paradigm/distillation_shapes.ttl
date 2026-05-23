@@ -1,0 +1,79 @@
+@prefix mlso: <http://w3id.org/mlso/> .
+@prefix mls: <http://www.w3.org/ns/mls#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# Knowledge Distillation Shapes
+# Validates: M2c (Knowledge Distillation)
+# Domain: mls:Algorithm
+# =============================================================================
+
+<http://w3id.org/mlsea/shapes/DistillationTemperatureShape> a sh:NodeShape ;
+    rdfs:label "Distillation Temperature Validation" ;
+    sh:message "Knowledge distillation experiments SHOULD specify mlso:hasDistillationTemperature (typical: 1.0-10.0)" ;
+    sh:property [ sh:datatype xsd:float ;
+            sh:maxInclusive 10.0 ;
+            sh:message "hasDistillationTemperature must be a float between 0.0 and 10.0" ;
+            sh:minExclusive 0.0 ;
+            sh:path mlso:hasDistillationTemperature ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasDistillationTemperature .
+
+<http://w3id.org/mlsea/shapes/DistillationAlphaShape> a sh:NodeShape ;
+    rdfs:label "Distillation Alpha Validation" ;
+    sh:message "Knowledge distillation experiments SHOULD specify mlso:hasDistillationAlpha (balance between hard and soft labels, typical: 0.1-0.9)" ;
+    sh:property [ sh:datatype xsd:float ;
+            sh:maxInclusive 1.0 ;
+            sh:message "hasDistillationAlpha must be a float between 0.0 and 1.0" ;
+            sh:minInclusive 0.0 ;
+            sh:path mlso:hasDistillationAlpha ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasDistillationAlpha .
+
+<http://w3id.org/mlsea/shapes/TeacherModelShape> a sh:NodeShape ;
+    rdfs:label "Teacher Model Validation" ;
+    sh:message "Knowledge distillation experiments SHOULD link to a teacher model via mlso:hasTeacherModel" ;
+    sh:property [ sh:message "hasTeacherModel must reference an Algorithm (teacher)" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasTeacherModel ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasTeacherModel .
+
+<http://w3id.org/mlsea/shapes/StudentModelShape> a sh:NodeShape ;
+    rdfs:label "Student Model Validation" ;
+    sh:message "Knowledge distillation experiments SHOULD link to a student model via mlso:hasStudentModel" ;
+    sh:property [ sh:message "hasStudentModel must reference an Algorithm (student)" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:hasStudentModel ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasStudentModel .
+
+<http://w3id.org/mlsea/shapes/DistillationLossShape> a sh:NodeShape ;
+    rdfs:label "Distillation Loss Validation" ;
+    sh:message "Knowledge distillation experiments SHOULD specify mlso:hasDistillationLoss (e.g., KL-divergence, cross-entropy)" ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:message "hasDistillationLoss must be a string" ;
+            sh:path mlso:hasDistillationLoss ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasDistillationLoss .
+
+<http://w3id.org/mlsea/shapes/DistilledFromShape> a sh:NodeShape ;
+    rdfs:label "Distilled From Validation" ;
+    sh:message "Student algorithm SHOULD reference teacher via mlso:distilledFrom" ;
+    sh:property [ sh:message "distilledFrom must reference an Algorithm (teacher)" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:distilledFrom ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:distilledFrom .
+
+<http://w3id.org/mlsea/shapes/DistillsToShape> a sh:NodeShape ;
+    rdfs:label "Distills To Validation" ;
+    sh:message "Teacher algorithm SHOULD reference student via mlso:distillsTo" ;
+    sh:property [ sh:message "distillsTo must reference an Algorithm (student)" ;
+            sh:nodeKind sh:IRI ;
+            sh:path mlso:distillsTo ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:distillsTo .

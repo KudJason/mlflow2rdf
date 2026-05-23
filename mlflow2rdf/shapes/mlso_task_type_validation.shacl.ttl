@@ -1,0 +1,13 @@
+@prefix ns1: <http://w3id.org/mlsea/tag/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+<http://w3id.org/mlsea/shapes/TaskTypeVocabShape> a sh:NodeShape ;
+    rdfs:label "Task Type Vocabulary Validation" ;
+    sh:property [ sh:in ( "Anomaly Detection" "Classification" "Clustering" "Dimensionality Reduction" "Recommendation" "Regression" "Time Series Forecasting" "anomaly_detection" "classification" "clustering" "dimensionality_reduction" "recommendation" "regression" "time_series" ) ;
+            sh:message "Task type must be one of: ['Anomaly Detection', 'Classification', 'Clustering', 'Dimensionality Reduction', 'Recommendation', 'Regression', 'Time Series Forecasting', 'anomaly_detection', 'classification', 'clustering', 'dimensionality_reduction', 'recommendation', 'regression', 'time_series']" ;
+            sh:path ns1:mlsea-task-type ;
+            sh:severity sh:Violation ] ;
+    sh:targetClass <http://www.w3.org/ns/mls#Run> .
+

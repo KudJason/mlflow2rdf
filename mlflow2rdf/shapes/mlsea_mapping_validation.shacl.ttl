@@ -1,0 +1,67 @@
+@prefix adms: <http://www.w3.org/ns/adms#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix mls: <http://www.w3.org/ns/mls#> .
+@prefix mlsea: <http://w3id.org/mlsea/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://w3id.org/mlsea/shapes/DatasetMappingShape> a sh:NodeShape ;
+    rdfs:label "MLSea Dataset Mapping" ;
+    sh:property [ sh:datatype xsd:integer ;
+            sh:message "Dataset SHOULD have rowCount" ;
+            sh:minCount 1 ;
+            sh:path mlsea:rowCount ;
+            sh:severity sh:Warning ],
+        [ sh:message "Dataset SHOULD have title" ;
+            sh:minCount 1 ;
+            sh:path dcterms:title ;
+            sh:severity sh:Warning ],
+        [ sh:datatype xsd:integer ;
+            sh:message "Dataset SHOULD have featureCount" ;
+            sh:minCount 1 ;
+            sh:path mlsea:featureCount ;
+            sh:severity sh:Warning ],
+        [ sh:message "Dataset SHOULD have source" ;
+            sh:minCount 1 ;
+            sh:path dcterms:source ;
+            sh:severity sh:Warning ],
+        [ sh:datatype xsd:string ;
+            sh:message "Dataset SHOULD have targetName" ;
+            sh:minCount 1 ;
+            sh:path mlsea:targetName ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Dataset .
+
+<http://w3id.org/mlsea/shapes/RunMappingShape> a sh:NodeShape ;
+    rdfs:label "MLSea Run Mapping Constraints" ;
+    sh:property [ sh:message "Run SHOULD have prov:wasAssociatedWith (user)" ;
+            sh:minCount 1 ;
+            sh:path prov:wasAssociatedWith ;
+            sh:severity sh:Warning ],
+        [ sh:message "Run SHOULD have adms:status" ;
+            sh:minCount 1 ;
+            sh:path adms:status ;
+            sh:severity sh:Warning ],
+        [ sh:message "Run SHOULD belong to an Experiment" ;
+            sh:minCount 1 ;
+            sh:path mls:belongsToExperiment ;
+            sh:severity sh:Warning ],
+        [ sh:message "Run SHOULD have dcterms:identifier" ;
+            sh:minCount 1 ;
+            sh:path dcterms:identifier ;
+            sh:severity sh:Warning ],
+        [ sh:datatype xsd:dateTime ;
+            sh:message "Run SHOULD have dcterms:modified" ;
+            sh:minCount 1 ;
+            sh:path dcterms:modified ;
+            sh:severity sh:Warning ],
+        [ sh:datatype xsd:dateTime ;
+            sh:message "Run SHOULD have dcterms:created" ;
+            sh:minCount 1 ;
+            sh:path dcterms:created ;
+            sh:severity sh:Warning ] ;
+    sh:targetClass mls:Run .
+

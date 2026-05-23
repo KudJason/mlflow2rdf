@@ -1,0 +1,69 @@
+# Metric Type Map
+# Maps MLflow metric names to MLSO evaluation measure URIs.
+# Key: metric name (lowercase), Value: URI suffix (relative to MLSO_EVAL namespace)
+
+# --- General evaluation measures ---
+aic: MLS.EvaluationMeasure
+bic: MLS.EvaluationMeasure
+mase: MLS.EvaluationMeasure
+smape: MLS.EvaluationMeasure
+mape: MLS.EvaluationMeasure
+rmse: root_mean_squared_error
+mae: mean_absolute_error
+r2: correlation_coefficient
+r2_score: correlation_coefficient
+mse: MLS.EvaluationMeasure
+accuracy: accuracy
+f1: f_measure
+f1_score: f_measure
+precision: precision
+recall: recall
+roc-auc: area_under_curve
+roc_auc: area_under_curve
+kappa: kappa
+matthews_correlation: matthews_correlation_coefficient
+matthews_correlation_coefficient: matthews_correlation_coefficient
+log-loss: MLS.EvaluationMeasure
+log_loss: MLS.EvaluationMeasure
+
+# --- NLP evaluation measures ---
+bleu-score: MLS.EvaluationMeasure
+bleu_score: MLS.EvaluationMeasure
+bleu: MLS.EvaluationMeasure
+rouge-l: MLS.EvaluationMeasure
+rouge_l: MLS.EvaluationMeasure
+rougeL: MLS.EvaluationMeasure
+
+# --- Training phase measures ---
+train-loss: MLS.EvaluationMeasure
+val-loss: MLS.EvaluationMeasure
+training-loss: MLS.EvaluationMeasure
+validation-loss: MLS.EvaluationMeasure
+training_accuracy_score: accuracy
+training_f1_score: f_measure
+training_precision_score: precision
+training_recall_score: recall
+training_roc_auc: MLS.EvaluationMeasure
+training_roc_auc_score: MLS.EvaluationMeasure
+training_score: MLS.EvaluationMeasure
+
+# --- Vision evaluation measures ---
+map_at_0.5: MLS.EvaluationMeasure
+map@0.5: MLS.EvaluationMeasure
+mAP: MLS.EvaluationMeasure
+mAP_at_0.5: MLS.EvaluationMeasure
+contrastive_loss: MLS.EvaluationMeasure
+kd_loss: MLS.EvaluationMeasure
+probe_accuracy: accuracy
+zero_shot_accuracy: accuracy
+image_recall_at_1: MLS.EvaluationMeasure
+image_recall_at_5: MLS.EvaluationMeasure
+image_recall_at_10: MLS.EvaluationMeasure
+text_recall_at_1: MLS.EvaluationMeasure
+text_recall_at_5: MLS.EvaluationMeasure
+text_recall_at_10: MLS.EvaluationMeasure
+fid: MLS.EvaluationMeasure
+elbo: MLS.EvaluationMeasure
+clipscore: MLS.EvaluationMeasure
+inception_score: MLS.EvaluationMeasure
+perplexity: MLS.EvaluationMeasure

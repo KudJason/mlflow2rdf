@@ -1,0 +1,5 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+# Deprecated: do not use.
+# This file previously enforced class presence, which is NOT the intended check.
+# Use mlso_unknown_class_checks.shacl.ttl instead.

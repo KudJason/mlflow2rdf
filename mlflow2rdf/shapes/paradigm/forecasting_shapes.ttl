@@ -1,0 +1,55 @@
+@prefix mlso: <http://w3id.org/mlso/> .
+@prefix mls: <http://www.w3.org/ns/mls#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# Time-Series Forecasting Shapes
+# Validates: M4a (ARIMA), M4b (N-BEATS), M4c (LightGBM)
+# =============================================================================
+
+<http://w3id.org/mlsea/shapes/ForecastingHorizonShape> a sh:NodeShape ;
+    rdfs:label "Forecasting Horizon Validation" ;
+    sh:message "Time-series forecasting experiments SHOULD specify mlso:hasForecastingHorizon (prediction window length)" ;
+    sh:property [ sh:datatype xsd:integer ;
+            sh:minInclusive 1 ;
+            sh:path mlso:hasForecastingHorizon ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasForecastingHorizon .
+
+<http://w3id.org/mlsea/shapes/LookbackWindowShape> a sh:NodeShape ;
+    rdfs:label "Lookback Window Validation" ;
+    sh:message "Time-series forecasting experiments SHOULD specify mlso:hasLookbackWindow (input context length)" ;
+    sh:property [ sh:datatype xsd:integer ;
+            sh:minInclusive 1 ;
+            sh:path mlso:hasLookbackWindow ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasLookbackWindow .
+
+<http://w3id.org/mlsea/shapes/TimeSeriesMetricShape> a sh:NodeShape ;
+    rdfs:label "Time-Series Metric Validation" ;
+    sh:message "Time-series experiments SHOULD use appropriate metrics: MAE, MSE, RMSE, MASE, or sMAPE" ;
+    sh:property [ sh:nodeKind sh:IRI ;
+            sh:path mlso:hasMetric ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf <http://w3id.org/mlsea/tag/mlsea-modality/timeseries> .
+
+<http://w3id.org/mlsea/shapes/SeasonalityShape> a sh:NodeShape ;
+    rdfs:label "Seasonality Validation" ;
+    sh:message "Time-series forecasting experiments SHOULD specify mlso:hasSeasonality (e.g., 12 for monthly data with yearly seasonality)" ;
+    sh:property [ sh:datatype xsd:integer ;
+            sh:minInclusive 1 ;
+            sh:message "hasSeasonality must be a positive integer" ;
+            sh:path mlso:hasSeasonality ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf mlso:hasSeasonality .
+
+<http://w3id.org/mlsea/shapes/NeuralForecastingShape> a sh:NodeShape ;
+    rdfs:label "Neural Forecasting Validation" ;
+    sh:message "Neural forecasting models should specify hidden dimension or layer count" ;
+    sh:property [ sh:message "Neural forecasting should specify hidden size" ;
+            sh:path <http://w3id.org/mlsea/mlflow/hyperparameter/hidden-size> ;
+            sh:severity sh:Warning ] ;
+    sh:targetSubjectsOf <http://w3id.org/mlsea/mlflow/hyperparameter/hidden-size> .

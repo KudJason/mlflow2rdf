@@ -1,0 +1,25 @@
+# Paradigm Label Map
+# Normalizes MLflow tag values into human-readable paradigm labels.
+# Key: raw tag value (snake_case or kebab-case), Value: display label.
+
+supervised: Supervised
+supervised-classification: Supervised Classification
+self-supervised: Self-Supervised
+knowledge-distillation: Knowledge Distillation
+contrastive-embedding: Contrastive Embedding
+object-detection: Object Detection
+vision-transformer: Vision Transformer
+vision-language-alignment: Vision-Language Alignment
+parameter-efficient-ft: Parameter-Efficient Fine-Tuning
+late-fusion: Late Fusion
+generative-diffusion: Generative Diffusion
+generative-vae: Generative VAE
+neural-forecasting: Neural Forecasting
+gradient-boosting: Gradient Boosting
+statistical: Statistical
+self_supervised_learning: Self-Supervised Learning
+knowledge_distillation: Knowledge Distillation
+contrastive_learning: Contrastive Learning
+parameter_efficient_finetuning: Parameter-Efficient Fine-Tuning
+time_series_forecasting: Time Series Forecasting
+multimodal_fusion: Multi-Modal Fusion
