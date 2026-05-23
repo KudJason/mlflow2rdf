@@ -109,4 +109,4 @@ If you use this package in your research, please cite:
 
 - [MLSO Ontology](https://github.com/dtai-kg/MLSO)
 - [MLSea Knowledge Graph](https://mlsea.ai)
-- [Issue Tracker](https://github.com/jasonjia-ml/MLSO/issues)
+- [Issue Tracker](https://github.com/KudJason/mlflow2rdf/issues)
