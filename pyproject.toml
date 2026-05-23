@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mlflow2rdf"
-version = "0.2.1"
+version = "0.2.2"
 description = "Convert MLflow tracking data into MLSO-aligned RDF Knowledge Graphs"
-readme = "PACKAGE_README.md"
+readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.8"
 authors = [
