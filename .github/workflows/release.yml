@@ -1,0 +1,108 @@
+name: Release
+
+# 发版 = 打 tag。**不需要任何 token。**
+#
+# 为什么用 Trusted Publishing (OIDC) 而不是 twine + API token：
+#
+#   0.2.3 出问题的结构性原因，是「本地能跑」与「发出去的能跑」之间
+#   没有任何自动检查。手动 `twine upload` 把这两件事分开了 ——
+#   结果一个装不上的 wheel 被推上了 PyPI。
+#
+#   改成打 tag 触发之后，同一条流水线里必然经过
+#   「构建 → 干净安装 → 跑完整性测试 → 才发布」，
+#   本地能不能跑就不再重要了：发出去的能跑才重要。
+#
+# 一次性设置（在 PyPI 网页上做，与代码无关）：
+#   PyPI → Your projects → mlflow2rdf → Publishing
+#   → 添加 Trusted Publisher：
+#       Owner:           KudJason
+#       Repository:      mlflow2rdf
+#       Workflow name:   release.yml
+#       Environment:     pypi
+#   然后在 GitHub 仓库 Settings → Environments 建一个名为 `pypi` 的环境。
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  # ------------------------------------------------------------------ 发布闸门
+  gate:
+    name: 发布前闸门（装 wheel 再测）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 校验 tag 与包版本一致
+        # 防止「tag 打了 v0.2.5 但 pyproject 还写着 0.2.4」这类事故
+        run: |
+          python - <<'PY'
+          import os, re, sys, tomllib, pathlib
+          ref = os.environ.get("GITHUB_REF_NAME", "")
+          if not ref.startswith("v"):
+              print("非 tag 触发，跳过版本一致性检查"); sys.exit(0)
+          tag = ref[1:]
+          data = tomllib.loads(pathlib.Path("pyproject.toml").read_text())
+          ver = data["project"]["version"]
+          if tag != ver:
+              sys.exit(f"❌ tag {ref} 与 pyproject version {ver} 不一致")
+          print(f"✅ tag 与版本一致: {ref}")
+          PY
+
+      - name: 构建
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build
+
+      - name: 干净环境安装并跑完整性测试
+        run: |
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install --upgrade pip
+          /tmp/clean/bin/pip install dist/*.whl pytest
+      - working-directory: /tmp
+        run: /tmp/clean/bin/python -m pytest "$GITHUB_WORKSPACE/tests/test_config_completeness.py" -v
+
+      - name: 断言 wheel 含全部 config 数据文件
+        run: |
+          python - <<'PY'
+          import glob, sys, zipfile
+          whl = sorted(glob.glob("dist/*.whl"))[-1]
+          names = zipfile.ZipFile(whl).namelist()
+          need = {"mappings.yaml", "paradigm_labels.yaml", "metric_types.yaml",
+                  "task_types.yaml", "property_routing.yaml", "property_uris.yaml",
+                  "sources.yaml", "validation.yaml", "rml_mappings.yaml",
+                  "morph_kgc.ini"}
+          got = {n.rsplit("/", 1)[-1] for n in names if "/config/" in n}
+          missing = need - got
+          print(f"{whl}: {len(names)} 个文件，config {len(got)} 个")
+          sys.exit(f"❌ 缺少: {sorted(missing)}") if missing else print("✅ 齐全")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  # -------------------------------------------------------------------- 发布
+  publish:
+    name: 发布到 PyPI
+    needs: gate
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/mlflow2rdf
+    permissions:
+      id-token: write          # ★ OIDC 必需；全程不需要 API token
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # 若该版本已存在则跳过而不是失败（重跑流水线时有用）
+          skip-existing: true

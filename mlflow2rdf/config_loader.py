@@ -28,6 +28,18 @@ from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
 
+
+class ConfigNotFoundError(FileNotFoundError):
+    """必需的配置文件缺失。
+
+    单独定义这个类型，是为了把「配置丢了」与「路径写错」区分开 ——
+    前者几乎总是**打包问题**（wheel 里没打进 config/），
+    后者是调用方的问题。
+    """
+
+
+_UNSET = object()
+
 # Default config directory (relative to this file)
 _DEFAULT_CONFIG_DIR = Path(__file__).parent / "config"
 
@@ -56,8 +68,16 @@ class ConfigProxy:
         self._config_dir = config_dir
         self._cache: Dict[str, Any] = {}
 
-    def _load(self, name: str) -> Any:
-        """Load a single config file, with caching."""
+    def _load(self, name: str, *, required: bool = True) -> Any:
+        """Load a single config file, with caching.
+
+        ★ 2026-10-14 行为变更：配置文件缺失时**抛 ConfigNotFoundError**，
+          不再只打一条 warning 然后返回空字典。
+
+        原因：0.2.3 的 wheel 里 config/ 整个没打进去，而旧行为是
+        「警告 + 返回 {}」→ 转换照跑，产出一份**语义为空但看起来正常的图**。
+        静默的错误输出比崩溃危险得多。
+        """
         if name in self._cache:
             return self._cache[name]
 
@@ -67,7 +87,16 @@ class ConfigProxy:
 
         path = self._config_dir / filename
         if not path.exists():
-            logger.warning(f"Config file not found: {path}")
+            msg = f"Config file not found: {path}"
+            if required:
+                raise ConfigNotFoundError(
+                    msg + "\n"
+                    "  配置文件是运行必需的。若这是通过 pip 安装的包，"
+                    "几乎可以断定是打包遗漏：\n"
+                    "  检查 pyproject.toml 的 [tool.setuptools.package-data] 是否包含 "
+                    "'config/*.yaml' 与 'config/*.ini'。"
+                )
+            logger.warning(msg)
             self._cache[name] = {}
             return self._cache[name]
 
@@ -125,11 +154,18 @@ class ConfigProxy:
 
     # --- Generic access ---
 
-    def get(self, name: str, default: Any = None) -> Any:
-        """Load any config by attribute name, with default fallback."""
+    def get(self, name: str, default: Any = _UNSET) -> Any:
+        """按名取配置。
+
+        默认**严格**：缺文件就抛。
+        显式传 `default`（例如 `.get("x", {})`）才容忍缺失 ——
+        这样"容忍"永远是一个**写明了的决定**，而不是默认行为。
+        """
         try:
             return self._load(name)
-        except AttributeError:
+        except (AttributeError, ConfigNotFoundError):
+            if default is _UNSET:
+                raise
             return default
 
     def __getattr__(self, name: str) -> Any:
@@ -148,6 +184,11 @@ class ConfigProxy:
     def available_configs(self) -> list:
         """List all registered config names."""
         return list(_CONFIG_FILES.keys())
+
+    def missing_configs(self) -> list:
+        """返回**磁盘上缺失**的配置名 —— 打包自检用。"""
+        return [n for n, fn in _CONFIG_FILES.items()
+                if not (self._config_dir / fn).exists()]
 
     def __repr__(self) -> str:
         return f"ConfigProxy(config_dir={self._config_dir}, cached={list(self._cache)})"

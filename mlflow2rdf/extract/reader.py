@@ -72,8 +72,24 @@ def load_all_runs(mlruns_dir_path: str) -> list[dict]:
             if m_dir.is_dir():
                 for f in m_dir.iterdir():
                     if f.is_file():
-                        # Handle MLflow metrics format which may have multiple parts (e.g timestamp, val, step)
-                        parts = f.read_text().strip().split()
+                        # MLflow 的 metrics 文件是「每行一个观测」：
+                        #     <timestamp> <value> <step>
+                        #
+                        # ★ 2026-10-14 修：原写法是
+                        #     parts = f.read_text().strip().split()   # 把多行摊平成一个列表
+                        #     val = parts[1]                          # → 永远取到第一行
+                        #   于是多轮训练导出的是**第一轮**的值：
+                        #     0.475(step1) / 0.65(step2)  →  导出 0.475
+                        #   导致「练到 0.65 的 run」和「停在 0.475 的 run」在图上无法区分。
+                        #
+                        # 取**最后一行**（该指标的最新观测），语义上对应
+                        # "这个 run 在该指标上的表现"。
+                        # 完整时序（每个 step 一个 ModelEvaluation 节点）是模型层改动，
+                        # 留待 0.3.0，不塞进补丁版。
+                        lines = [ln for ln in f.read_text().splitlines() if ln.strip()]
+                        if not lines:
+                            continue
+                        parts = lines[-1].split()
                         val = parts[1] if len(parts) >= 2 else parts[0]
                         record["metrics"][f.name] = val
 

@@ -1,0 +1,139 @@
+name: CI
+
+# 每次 push / PR 都跑。
+#
+# ★ 关键设计：**在构建出来的 wheel 上测**，不是在源码树上测。
+#   0.2.3 的打包 bug（config/ 没进 wheel）在源码树里永远测不出来 ——
+#   yaml 就躺在旁边，测试必然通过。只有装上 wheel 才会暴露。
+#   所以下面 `wheel` 这个 job 才是真正的闸门。
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # ------------------------------------------------------------ 源码层单元测试
+  unit:
+    name: 单元测试（源码树）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: 安装
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]" pyyaml
+      - name: 跑单元测试（排除打包完整性 —— 那个必须在装好的 wheel 上跑）
+        run: pytest tests/ -q --ignore=tests/test_config_completeness.py
+
+  # ------------------------------------------- 打包完整性（源码树测不出来的那类）
+  wheel:
+    name: 打包完整性（构建 wheel → 干净安装 → 再测）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 构建 wheel
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build --wheel
+
+      - name: 干净环境安装 wheel（不带源码树）
+        run: |
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install --upgrade pip
+          /tmp/clean/bin/pip install dist/*.whl
+          /tmp/clean/bin/pip install pytest
+
+      - name: 在**安装好的包**上跑完整性测试
+        # cwd 故意切到 /tmp，确保 import 到的是 site-packages 里的 mlflow2rdf，
+        # 而不是仓库根目录下的同名目录。
+        working-directory: /tmp
+        run: /tmp/clean/bin/python -m pytest "$GITHUB_WORKSPACE/tests/test_config_completeness.py" -v
+
+      - name: 断言 wheel 内含 config 数据文件
+        run: |
+          python - <<'PY'
+          import glob, sys, zipfile
+          whl = sorted(glob.glob("dist/*.whl"))[-1]
+          names = zipfile.ZipFile(whl).namelist()
+          cfg = [n for n in names if "/config/" in n]
+          need = {"mappings.yaml", "paradigm_labels.yaml", "metric_types.yaml",
+                  "task_types.yaml", "property_routing.yaml", "property_uris.yaml",
+                  "sources.yaml", "validation.yaml", "rml_mappings.yaml",
+                  "morph_kgc.ini"}
+          got = {n.rsplit("/", 1)[-1] for n in cfg}
+          missing = need - got
+          print(f"{whl}: {len(names)} 个文件，其中 config {len(cfg)} 个")
+          if missing:
+              sys.exit(f"❌ wheel 缺少 config 文件: {sorted(missing)}")
+          print("✅ config 数据文件齐全")
+          PY
+
+      - name: 冒烟：装好的包能真跑一次转换
+        working-directory: /tmp
+        run: |
+          /tmp/clean/bin/python - <<'PY'
+          from mlflow2rdf.config_loader import load_config
+          cfg = load_config()
+          missing = cfg.missing_configs()
+          assert not missing, f"缺失配置: {missing}"
+          # 关键配置必须非空 —— 空 dict 就是静默降级
+          for name in ("task_types", "paradigm_labels", "metric_types"):
+              assert cfg.get(name), f"配置 {name} 为空"
+          print("✅ 所有配置可从安装位置加载且非空")
+          PY
+
+  # ---------------------------------------------------------------- 导出功能测试
+  export:
+    name: 端到端导出（造 mlruns → 导出 RDF → 校验）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: 安装
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e . pyyaml pytest
+
+      - name: 造一份含**多轮指标**的最小 mlruns，验证取的是最后一轮
+        run: |
+          python - <<'PY'
+          import os, pathlib
+          root = pathlib.Path("mlruns/0/abc123"); 
+          for d in ("metrics", "params", "tags"):
+              (root / d).mkdir(parents=True, exist_ok=True)
+          (pathlib.Path("mlruns/0") / "meta.yaml").write_text(
+              "experiment_id: '0'\nname: t\n")
+          (root / "meta.yaml").write_text(
+              "run_id: abc123\nstatus: 3\nstart_time: 1\nend_time: 2\n")
+          # 两轮：第一轮 0.475，第二轮 0.65
+          (root / "metrics" / "plan_exact").write_text(
+              "1000 0.475 1\n2000 0.65 2\n")
+          (root / "params" / "lr").write_text("0.001")
+          print("mlruns 造好")
+          PY
+
+      - name: 导出并断言取到**最后一轮**的值
+        run: |
+          python - <<'PY'
+          import sys
+          from mlflow2rdf import SemanticTracker
+          t = SemanticTracker(mlflow_uri="mlruns", output_graph_uri="http://x/",
+                              default_modality="tabular")
+          g = t.export()
+          g.serialize("out.ttl", format="turtle")
+          txt = open("out.ttl").read()
+          assert "0.65" in txt, "❌ 没导出最后一轮的值 0.65"
+          assert "0.475" not in txt, "❌ 导出的是第一轮的值 0.475（多轮 bug 未修）"
+          print("✅ 多轮指标取的是最后一轮")
+          PY
