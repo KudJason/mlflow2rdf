@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mlflow2rdf"
-version = "0.2.3"
+version = "0.2.4"
 description = "Convert MLflow tracking data into MLSO-aligned RDF Knowledge Graphs"
 readme = {file = "README.md", content-type = "text/markdown"}
 license = {text = "MIT"}
@@ -40,4 +40,13 @@ mlflow2rdf = "mlflow2rdf.cli:main"
 include = ["mlflow2rdf*"]
 
 [tool.setuptools.package-data]
-mlflow2rdf = ["shapes/*.ttl", "shapes/**/*.ttl"]
+# 修 2026-10-14：原来只声明了 shapes，漏掉 config ——
+# 导致 PyPI 上的 wheel 里一个 YAML 都没有，装出来根本跑不起来
+# （运行期 config_loader 会去找 config/*.yaml）。
+# 另：morph_kgc.ini 也要打进去。
+mlflow2rdf = [
+    "shapes/*.ttl",
+    "shapes/**/*.ttl",
+    "config/*.yaml",
+    "config/*.ini",
+]

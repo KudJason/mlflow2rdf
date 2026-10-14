@@ -22,30 +22,36 @@ pip install mlflow2rdf
 
 ```bash
 # Convert MLflow runs to RDF
-mlflow2rdf --mlruns /path/to/mlruns --output output.ttl
+mlflow2rdf --uri /path/to/mlruns --out output.ttl
 
 # With SHACL validation
-mlflow2rdf --mlruns /path/to/mlruns --output output.ttl --validate
+mlflow2rdf --uri /path/to/mlruns --out output.ttl --validate
 ```
+
+> Flags are `--uri` / `--out` (not `--mlruns` / `--output`).
 
 ### Python API
 
 ```python
-from mlflow2rdf import MLflow2RDFConverter
-
-# Initialize converter
-converter = MLflow2RDFConverter(mlruns_path="/path/to/mlruns")
+from mlflow2rdf import SemanticTracker, export_and_validate
 
 # Convert to RDF
-graph = converter.convert()
+tracker = SemanticTracker(
+    mlflow_uri="/path/to/mlruns",
+    output_graph_uri="http://w3id.org/mlsea/mlflow/kg",
+    default_modality="tabular",
+)
+graph = tracker.export(experiment_ids=None, exclude_failed_runs=False)
 
 # Serialize to Turtle format
 graph.serialize("output.ttl", format="turtle")
 
-# Validate with SHACL
-results = converter.validate(graph)
-print(f"SHACL violations: {results}")
+# Or export + validate in one call
+export_and_validate("/path/to/mlruns", "output.ttl", inference="owlrl")
 ```
+
+> The previously documented `MLflow2RDFConverter` class **does not exist**.
+> The real entry points are `SemanticTracker` and `export_and_validate`.
 
 ## Features
 
